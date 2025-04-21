@@ -1,20 +1,39 @@
-// ConsoleApplication1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
+#include "FileHandler.h"
+#include "User.h"
+#include "Property.h"
+#include "AccCtrl.h"
+#include "Register.h"
+#include "Login.h"
+#include <unordered_map>
+#include <vector>
 
-int main()
-{
-    std::cout << "Hello World!\n";
+using namespace std;
+
+int main() {
+    Register reg;
+    Login log;
+    int choice;
+
+    do {
+        std::cout << "\n1. Register\n2. Login\n0. Exit\nChoose option: ";
+        std::cin >> choice;
+        std::cin.ignore(); // clear newline from input buffer
+
+        switch (choice) {
+        case 1:
+            reg.registerUser();
+            break;
+        case 2:
+            log.loginUser();
+            break;
+        case 0:
+            std::cout << "Goodbye!\n";
+            break;
+        default:
+            std::cout << "Invalid choice!\n";
+        }
+    } while (choice != 0);
+
+    return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
