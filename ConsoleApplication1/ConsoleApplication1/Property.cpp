@@ -5,8 +5,14 @@
 using namespace std;
 
 
-Property::Property(const string& id, const string& title, double price,const string& location, const string& owner)
-    : id(id), title(title), price(price), location(location), ownerName(owner) {}
+
+Property::Property(const std::string& id, const std::string& title, double price, const std::string& location, const std::string& owner, double area, int bedrooms, int bathrooms)
+{
+}
+Property::Property(const std::string& title, double price, const std::string& location,
+    const std::string& owner, double area, int bedrooms, int bathrooms)
+{
+}
 
 string Property::getId() const {
     return id;
@@ -27,6 +33,53 @@ string Property::getLocation() const {
 string Property::getOwnerUsername() const {
     return ownerName;
 }
+
+double Property::getArea() const
+{
+    return 0.0;
+}
+
+int Property::getBedrooms() const
+{
+    return 0;
+}
+
+int Property::getBathrooms() const
+{
+    return 0;
+}
+void Property::setId(const string& newId) {
+    id = newId;
+}
+
+void Property::setTitle(const string& newTitle) {
+    title = newTitle;
+}
+
+void Property::setPrice(double newPrice) {
+    price = newPrice;
+}
+
+void Property::setLocation(const string& newLocation) {
+    location = newLocation;
+}
+
+void Property::setOwnerUsername(const string& newOwner) {
+    ownerName = newOwner;
+}
+
+void Property::setArea(double newArea) {
+    area = newArea;
+}
+
+void Property::setBedrooms(int newBedrooms) {
+    bedrooms = newBedrooms;
+}
+
+void Property::setBathrooms(int newBathrooms) {
+    bathrooms = newBathrooms;
+}
+
 
 string Property::toFileString() const {
    
