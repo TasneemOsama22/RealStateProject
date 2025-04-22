@@ -10,7 +10,7 @@ Property::Property(const std::string& id, const std::string& title, double price
 {
 }
 Property::Property(const std::string& title, double price, const std::string& location,
-    const std::string& owner, double area, int bedrooms, int bathrooms)
+    const std::string& owner, double area, int bedrooms, int bathrooms, PropertyStatus status)
 {
 }
 
@@ -48,6 +48,7 @@ int Property::getBathrooms() const
 {
     return 0;
 }
+PropertyStatus getStatus() const { return status; }
 void Property::setId(const string& newId) {
     id = newId;
 }

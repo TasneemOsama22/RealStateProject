@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <sstream>
-
 using namespace std;
+enum PropertyStatus {
+    Pending, Approved, Rejected
+};
 class Property {
 private:
     string id;
@@ -12,7 +14,7 @@ private:
     string ownerName;
     double area;
     int bedrooms, bathrooms;
-
+    PropertyStatus status;
 public:
     Property() = default;
     Property(const std::string& id, const std::string& title, double price,
@@ -20,7 +22,7 @@ public:
         int bedrooms,int bathrooms);
     Property(const std::string& title, double price,
         const std::string& location, const std::string& owner, double area,
-        int bedrooms, int bathrooms);
+        int bedrooms, int bathrooms, PropertyStatus status);
     string getId() const;
     string getTitle() const;
     double getPrice() const;

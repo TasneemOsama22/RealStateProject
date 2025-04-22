@@ -4,4 +4,5 @@
 #include <User.h>
 class AppPlatform {
 	void addProperty();
+	void getStatus(Property p);
 };
