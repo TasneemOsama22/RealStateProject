@@ -129,19 +129,13 @@
   <ItemGroup>
     <ClCompile Include="Account.cpp" />
     <ClCompile Include="ConsoleApplication1.cpp" />
-    <ClCompile Include="FileHandler.cpp" />
     <ClCompile Include="Login.cpp" />
-    <ClCompile Include="Property.cpp" />
     <ClCompile Include="Register.cpp" />
-    <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.h" />
-    <ClInclude Include="FileHandler.h" />
     <ClInclude Include="Login.h" />
-    <ClInclude Include="Property.h" />
     <ClInclude Include="Register.h" />
-    <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,7 +1,4 @@
 #include <iostream>
-#include "FileHandler.h"
-#include "User.h"
-#include "Property.h"
 #include "AccCtrl.h"
 #include "Register.h"
 #include "Login.h"
