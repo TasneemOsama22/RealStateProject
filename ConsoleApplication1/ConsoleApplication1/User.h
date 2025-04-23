@@ -18,14 +18,18 @@ public:
     string UserId;
     string username;
     string password;
-    bool isAdmin; // flag to check if it's admin or regular user
+    bool isAdmin = true; // flag to check if it's admin or regular user
     queue<string> InboxMesseges;
     vector<Property> UserProperty;
 
     User(); // default constructor
-    User(const string& u, const string& p, bool a); // full constructor
-    User(string UserId, string pass); // another constructor
+    User(const string& u, const string& p, bool a);
+    User(string UserId, string pass);
     ~User();
+    //Files
+    string toFileString() const; //for the user files
+    void fromFileString(const string& line);
+    bool checkPassword(const string& inputPassword) const;
 
     // setters
     void setIsBanned(bool value);

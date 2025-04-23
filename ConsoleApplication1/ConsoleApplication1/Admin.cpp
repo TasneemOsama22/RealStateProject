@@ -15,12 +15,16 @@ void Admin::ViewApprovedAds(vector<Property>& ApprovedAds) {
     int AdsCount = 0;
     for (int i = 0; i < ApprovedAds.size(); i++) {
         cout << "\n========== Approved Property Ad ==========" << endl;
-        cout << "Ad Number   : " << ++AdsCount << endl;
-        cout << "Ad ID       : " << ApprovedAds[i].getId() << endl;
-        cout << "Title       : " << ApprovedAds[i].getTitle() << endl;
-        cout << "User ID     : " << ApprovedAds[i].getUserId() << endl;
-        cout << "Location    : " << ApprovedAds[i].getLocation() << endl;
-        cout << "Price       : " << ApprovedAds[i].getPrice() << " EGP" << endl;
+        cout << "Ad Number          : " << ++AdsCount << endl;
+        cout << "Ad ID              : " << ApprovedAds[i].getId() << endl;
+        cout << "Title              : " << ApprovedAds[i].getTitle() << endl;
+        cout << "User ID            : " << ApprovedAds[i].getUserId() << endl;
+        cout << "User Name          : " << ApprovedAds[i].getOwnerUsername() << endl;
+        cout << "Location           : " << ApprovedAds[i].getLocation() << endl;
+        cout << "Area               : " << ApprovedAds[i].getArea() << endl;
+        cout << "Number of Bedrooms : " << ApprovedAds[i].getBedrooms() << endl;
+        cout << "Number of Bathrooms: " << ApprovedAds[i].getBathrooms() << endl;
+        cout << "Price              : " << ApprovedAds[i].getPrice() << " EGP" << endl;
         cout << "==========================================\n" << endl;
     }
 
@@ -41,14 +45,18 @@ void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& App
         Property ad = PendingAds[i];
         string Userid = ad.getUserId();
 
-        cout << "\n========== Pending Property Review ==========" << endl;
-        cout << "Ad Number   : " << ++counter << endl;
-        cout << "Ad ID       : " << ad.getId() << endl;
-        cout << "Title       : " << ad.getTitle() << endl;
-        cout << "User ID     : " << ad.getUserId() << endl;
-        cout << "Location    : " << ad.getLocation() << endl;
+        cout << "\n================= Pending Property Review=================" << endl;
+        cout << "Ad Number          : " << ++counter << endl;
+        cout << "Ad ID              : " << ad.getId() << endl;
+        cout << "Title              : " << ad.getTitle() << endl;
+        cout << "User ID            : " << ad.getUserId() << endl;
+        cout << "User Name          : " << ad.getOwnerUsername() << endl;
+        cout << "Location           : " << ad.getLocation() << endl;
+        cout << "Area               : " << ad.getArea() << endl;
+        cout << "Number of Bedrooms : " << ad.getBedrooms() << endl;
+        cout << "Number of Bathrooms: " << ad.getBathrooms() << endl;
         cout << "Price       : " << ad.getPrice() << " EGP" << endl;
-        cout << "=============================================" << endl;
+        cout << "=========================================================" << endl;
 
         cout << "\nChoose an action for this property:\n";
         cout << "  1. Approve\n";

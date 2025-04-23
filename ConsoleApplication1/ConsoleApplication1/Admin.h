@@ -18,9 +18,6 @@ private:
 public:
     Admin(const string Id, const string Pass);
 
-
-    //Menu
-
     // view all pending ads
     void ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& ApprovedAds, unordered_map <string, User>& Users);
     // Approve ad

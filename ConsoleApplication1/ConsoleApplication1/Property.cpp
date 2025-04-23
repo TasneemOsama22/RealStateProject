@@ -5,15 +5,21 @@
 using namespace std;
 
 
-Property::Property(const string& id, const string& Userid, const string& title, double price, const string& location, const string& owner)
-    : id(id), UserId(Userid), title(title), price(price), location(location), ownerName(owner), status(PENDING) {
+
+Property::Property(const std::string& id, const std::string& Userid, const std::string& title, double price, const std::string& location, const std::string& owner, double area, int bedrooms, int bathrooms)
+    : id(id), UserId(Userid), title(title), price(price), location(location), ownerName(owner), status(Pending)
+{
+}
+Property::Property(const std::string& title, double price, const std::string& location,
+    const std::string& owner, double area, int bedrooms, int bathrooms, PropertyStatus status)
+{
+}
+string Property::getUserId() const {
+    return UserId;
 }
 
 string Property::getId() const {
     return id;
-}
-string Property::getUserId() const {
-    return UserId;
 }
 
 string Property::getTitle() const {
@@ -32,20 +38,75 @@ string Property::getOwnerUsername() const {
     return ownerName;
 }
 
-
-PropertyStatus Property::getStatus() const {
-    return status;
+double Property::getArea() const
+{
+    return 0.0;
 }
 
-string Property::getStatusAsString() const {
-    switch (status) {
-    case PENDING: return "Pending";
-    case APPROVED: return "Approved";
-    case REJECTED: return "Rejected";
-    default: return "Unknown";
-    }
+int Property::getBedrooms() const
+{
+    return 0;
 }
 
+int Property::getBathrooms() const
+{
+    return 0;
+}
+PropertyStatus Property::getStatus() const { return status; }
+void Property::setId(const string& newId) {
+    id = newId;
+}
 void Property::setStatus(PropertyStatus newStatus) {
     status = newStatus;
+}
+
+void Property::setTitle(const string& newTitle) {
+    title = newTitle;
+}
+
+void Property::setPrice(double newPrice) {
+    price = newPrice;
+}
+
+void Property::setLocation(const string& newLocation) {
+    location = newLocation;
+}
+
+void Property::setOwnerUsername(const string& newOwner) {
+    ownerName = newOwner;
+}
+
+void Property::setArea(double newArea) {
+    area = newArea;
+}
+
+void Property::setBedrooms(int newBedrooms) {
+    bedrooms = newBedrooms;
+}
+
+void Property::setBathrooms(int newBathrooms) {
+    bathrooms = newBathrooms;
+}
+
+
+string Property::toFileString() const {
+
+    return id + "," + title + "," + to_string(price) + "," + location + "," + ownerName;
+}
+
+void Property::fromFileString(const std::string& line) {
+    stringstream SS(line);
+    getline(SS, id, ',');
+    getline(SS, title, ',');
+    string priceStr; //take price as string to the file
+    getline(SS, priceStr, ',');
+    getline(SS, location, ',');
+    getline(SS, ownerName);
+    try {
+        price = stod(priceStr); //to make the price value double 
+    }
+    catch (invalid_argument e) {
+        cerr << "ERROR  " << e.what() << endl; //throw error when its not double
+    }
+
 }

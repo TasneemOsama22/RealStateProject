@@ -1,12 +1,8 @@
 #include "User.h"
-#include <string>
-#include <queue>
-#include <vector>
-
-User::User() = default;
 #include <iostream>
 #include <string>
 #include <queue>
+#include <sstream>
 #include <vector>
 
 User::User() = default;
@@ -21,60 +17,20 @@ User::User(string UserId, string pass) {
 }
 
 User::~User() = default;
-
-// Setters
-void User::setIsBanned(bool value) {
-    isBanned = value;
+string User::toFileString() const {
+    return username + "," + password + "," + (isAdmin ? "1" : "0");
 }
-
-void User::setblockDaysRemaining(int value) {
-    blockDaysRemaining = value;
+void User::fromFileString(const string& line) {
+    stringstream SS(line);
+    getline(SS, username, ',');
+    getline(SS, password, ',');
+    string adminFlag; //carry 1 or 0
+    getline(SS, adminFlag);
+    isAdmin = (adminFlag == "1"); //check if its 1 then the isAdmin value is true otherwise its false
 }
-
-void User::setIsBlocked(bool value) {
-    IsBlocked = value;
+bool User::checkPassword(const string& p) const {
+    return password == p;
 }
-
-void User::setCanPost(bool value) {
-    CanPost = value;
-}
-
-void User::setWarningCount(int value) {
-    WarningCount = value;
-}
-
-// Getters
-bool User::getIsBanned() {
-    return isBanned;
-}
-
-int User::getblockDaysRemaining() {
-    return blockDaysRemaining;
-}
-
-bool User::getIsBlocked() {
-    return IsBlocked;
-}
-
-bool User::getCanPost() {
-    return CanPost;
-}
-
-int User::getWarningCount() {
-    return WarningCount;
-}
-
-
-User::User(const string& u, const string& p, bool a)
-    : username(u), password(p), isAdmin(a) {
-}
-
-User::User(string UserId, string pass) {
-    this->UserId = UserId;
-    this->password = pass;
-}
-
-User::~User() = default;
 
 // Setters
 void User::setIsBanned(bool value) {
