@@ -23,7 +23,7 @@ public:
     // Approve ad
     void ApproveAd(Property ad, vector<Property>& approvedAds, vector<Property>& PendingAds, string UserId, unordered_map <string, User>& Users);
     // Reject ad
-    void RejectAd(Property ad, string UserId, vector<Property>& pendingAds, string reason, unordered_map <string, User>& Users, int ChoiseNumber);
+    void RejectAd(Property ad, string UserId, vector<Property>& pendingAds, unordered_map <string, User>& Users);
 
     // block a user from posting ads for a period of time
     void blockUser(string UserId, unordered_map <string, User>& Users);

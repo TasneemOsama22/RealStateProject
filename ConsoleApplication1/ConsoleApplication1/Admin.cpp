@@ -32,6 +32,7 @@ void Admin::ViewApprovedAds(vector<Property>& ApprovedAds) {
 }
 
 
+
 void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& ApprovedAds, unordered_map<string, User>& Users) {
     if (PendingAds.empty()) {
         cout << "There is no pending Ads\n";
@@ -71,7 +72,7 @@ void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& App
             cin >> choice;
         }
 
-        string reason = "No reason specified";
+
 
         if (choice == 1) {
 
@@ -80,58 +81,7 @@ void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& App
         }
         else if (choice == 2) {
 
-            cout << "\nPlease choose a reason for rejection (will be sent to the user): \n";
-            cout << "1. The price is unrealistic or too high\n";
-            cout << "2. Incomplete or unclear property information\n";
-            cout << "3. Missing or inappropriate images\n";
-            cout << "4. The description contains inappropriate or prohibited content\n";
-            cout << "5. Invalid property location\n";
-            cout << "6. Duplicate or very similar to an existing listing\n";
-            cout << "7. Violates the platform's posting policies\n";
-            cout << "8. Unsupported or undefined property type\n";
-            cout << "9. Other (please specify)\n";
-            cout << "Enter your choice (1-9): ";
-            int choice2;
-            cin >> choice2;
-
-            while (choice2 < 1 || choice2 > 9) {
-                cout << "Invalid choice! Please try again: ";
-                cin >> choice2;
-            }
-
-            switch (choice2) {
-            case 1:
-                reason = "The price is unrealistic or too high.";
-                break;
-            case 2:
-                reason = "Incomplete or unclear property information.";
-                break;
-            case 3:
-                reason = "Missing or inappropriate images.";
-                break;
-            case 4:
-                reason = "The description contains inappropriate or prohibited content.";
-                break;
-            case 5:
-                reason = "Invalid property location.";
-                break;
-            case 6:
-                reason = "Duplicate or very similar to an existing listing.";
-                break;
-            case 7:
-                reason = "Violates the platform's posting policies.";
-                break;
-            case 8:
-                reason = "Unsupported or undefined property type.";
-                break;
-            case 9:
-                cout << "Please type your reason: ";
-                cin.ignore();
-                getline(cin, reason);
-                break;
-            }
-
-            RejectAd(ad, Userid, PendingAds, reason, Users, choice2);
+            RejectAd(ad, Userid, PendingAds, Users);
             cout << "\nAd rejected and removed from the pending list.\n";
 
         }
@@ -169,7 +119,59 @@ void Admin::ApproveAd(Property p, vector<Property>& ApprovedAds, vector<Property
     }
 }
 
-void Admin::RejectAd(Property p, string UserId, vector<Property>& PendingAds, string reason, unordered_map<string, User>& Users, int ChoiseNumber) {
+void Admin::RejectAd(Property p, string UserId, vector<Property>& PendingAds, unordered_map<string, User>& Users) {
+
+    string reason = "No reason specified";
+    cout << "\nPlease choose a reason for rejection (will be sent to the user): \n";
+    cout << "1. The price is unrealistic or too high\n";
+    cout << "2. Incomplete or unclear property information\n";
+    cout << "3. Missing or inappropriate images\n";
+    cout << "4. The description contains inappropriate or prohibited content\n";
+    cout << "5. Invalid property location\n";
+    cout << "6. Duplicate or very similar to an existing listing\n";
+    cout << "7. Violates the platform's posting policies\n";
+    cout << "8. Unsupported or undefined property type\n";
+    cout << "9. Other (please specify)\n";
+    cout << "Enter your choice (1-9): ";
+    int ChoiseNumber;
+    cin >> ChoiseNumber;
+
+    while (ChoiseNumber < 1 || ChoiseNumber > 9) {
+        cout << "Invalid choice! Please try again: ";
+        cin >> ChoiseNumber;
+    }
+
+    switch (ChoiseNumber) {
+    case 1:
+        reason = "The price is unrealistic or too high.";
+        break;
+    case 2:
+        reason = "Incomplete or unclear property information.";
+        break;
+    case 3:
+        reason = "Missing or inappropriate images.";
+        break;
+    case 4:
+        reason = "The description contains inappropriate or prohibited content.";
+        break;
+    case 5:
+        reason = "Invalid property location.";
+        break;
+    case 6:
+        reason = "Duplicate or very similar to an existing listing.";
+        break;
+    case 7:
+        reason = "Violates the platform's posting policies.";
+        break;
+    case 8:
+        reason = "Unsupported or undefined property type.";
+        break;
+    case 9:
+        cout << "Please type your reason: ";
+        cin.ignore();
+        getline(cin, reason);
+        break;
+    }
     for (int i = 0; i < PendingAds.size(); i++) {
         if (p.getId() == PendingAds[i].getId()) {
             PendingAds.erase(PendingAds.begin() + i);
@@ -193,6 +195,7 @@ void Admin::RejectAd(Property p, string UserId, vector<Property>& PendingAds, st
         banUser(UserId, Users);
     }
 }
+
 
 
 
