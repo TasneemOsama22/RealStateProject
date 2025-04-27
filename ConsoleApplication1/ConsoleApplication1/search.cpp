@@ -23,6 +23,7 @@ vector<Property>search:: searchProperties(const vector<Property>& properties, co
 
         if (searchMatching == true) {
             Result.push_back(property);
+            found = true;
         }
     }
     if (!found) {
@@ -41,6 +42,7 @@ vector<Property>search::searchByLocation(const vector<Property>& properties, con
         }
         if (searchMatching == true) {
             locationResult.push_back(property);
+            found = true;
         }
        
     }
@@ -59,6 +61,7 @@ vector<Property>search::searchByPrices(const vector<Property>& properties, doubl
         }
         if (searchMatching == true) {
             PriceResult.push_back(property);
+            found = true;
         }
        
     }
@@ -78,6 +81,7 @@ vector<Property>search::searchByType(const vector<Property>& properties, const s
 
         if (searchMatching == true) {
             TypeResult.push_back(property);
+            found = true;
         }
         
     }
