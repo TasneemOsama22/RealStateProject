@@ -1,2 +1,9 @@
-﻿  ConsoleApplication1.cpp
-  ConsoleApplication1.vcxproj -> C:\Users\Ghareeb\source\repos\DS REP\RealStateProject\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
+﻿  search.cpp
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(8,104): error C2572: 'search::searchProperties': redefinition of default argument: parameter 1
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(8,128): error C2572: 'search::searchProperties': redefinition of default argument: parameter 2
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(8,152): error C2572: 'search::searchProperties': redefinition of default argument: parameter 3
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(8,185): error C2572: 'search::searchProperties': redefinition of default argument: parameter 4
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(34,103): error C2572: 'search::searchByLocation': redefinition of default argument: parameter 1
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(54,96): error C2572: 'search::searchByPrices': redefinition of default argument: parameter 1
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(54,120): error C2572: 'search::searchByPrices': redefinition of default argument: parameter 2
+C:\Users\compu magic\OneDrive\Documents\project Ds\RealStateProject\ConsoleApplication1\ConsoleApplication1\search.cpp(73,95): error C2572: 'search::searchByType': redefinition of default argument: parameter 1
