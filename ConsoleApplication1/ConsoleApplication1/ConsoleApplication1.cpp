@@ -17,14 +17,11 @@ int main() {
         double higherPrice = 200000;
         string type = "Apartment";
          int choice=0;
-         vector<Property>searchResult = s.searchProperties(properties, location, lowerPrice, higherPrice, type);
-         vector<Property>searchResultLocation = s.searchByLocation(properties, location);
-         vector<Property>searchResultPrices = s.searchByPrices(properties ,lowerPrice, higherPrice);
-         vector<Property>searchResultType = s.searchByType(properties,type);
          cout << "Press 1 if you want to searching By Location,Price or Type"<<endl;
          cout << "Press 2 if you want to searching By Location only" << endl;
          cout << "Press 3 if you want to searching By Price only" << endl;
          cout << "Press 4 if you want to searching By Type only" << endl;
+         cin >> choice;
          switch (choice)
          {
          case 1:
@@ -38,10 +35,7 @@ int main() {
              cout << "Type:";
              cin >> type;
              
-             if (!searchResult.empty()) {
-                 cout << "Search Result:"<<endl;
-             }
-                 for (const auto& prop : searchResult) {
+                 for (const auto& prop : s.searchProperties(properties, location, lowerPrice, higherPrice, type)) {
                      cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
                          "\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t" << "Number of Bathrooms:" << prop.getBedrooms() << "\t" << "Property Area:" << prop.getArea() << endl;
                  }
@@ -49,10 +43,7 @@ int main() {
          case 2:
              cout << "Location:" << endl;
              cin >> location;
-             if (!searchResultLocation.empty()) {
-                 cout << "Search Result:" << endl;
-             }
-                 for (const auto& prop : searchResultLocation) {
+                 for (const auto& prop : s.searchByLocation(properties, location)) {
 
                      cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
                          "\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t"<<"Number of Bathrooms:"<<prop.getBedrooms()<<"\t"<< "Property Area:" << prop.getArea() << endl;
@@ -63,10 +54,7 @@ int main() {
              cin >> lowerPrice;
              cout << "Higher Price:";
              cin >> higherPrice;
-             if (!searchResultPrices.empty()) {
-                 cout << "Search Result:" << endl;
-             }
-                 for (const auto& prop : searchResultPrices) {
+                 for (const auto& prop : s.searchByPrices(properties, lowerPrice, higherPrice)) {
                      cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
                          "\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t" << "Number of Bathrooms:" << prop.getBedrooms() << "\t" << "Property Area:" << prop.getArea() << endl;
                  }
@@ -74,10 +62,7 @@ int main() {
          case 4:
              cout << "Type:";
              cin >> type;
-             if (!searchResultType.empty()) {
-                 cout << "Search Result:" << endl;
-             }
-                 for (const auto& prop : searchResultType) {
+                 for (const auto& prop : s.searchByType(properties, type)) {
                      cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
                          "\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t"<<"Number of Bathrooms:"<<prop.getBedrooms()<<"\t"<< "Property Area:" << prop.getArea() << endl;
                  }

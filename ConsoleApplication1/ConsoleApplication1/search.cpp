@@ -5,7 +5,7 @@
 #include <sstream>
 #include <stdexcept>
 using namespace std;
-vector<Property>search:: searchProperties(const vector<Property>& properties, const string& location = "", double lowerPrice = 0, double higherPrice = 1000000000, const string& type = "") {
+vector<Property>search:: searchProperties(const vector<Property>& properties, const string& location , double lowerPrice , double higherPrice, const string& type) {
     vector<Property> Result;
     bool found = false;
     for (auto& property : properties) {
@@ -26,12 +26,12 @@ vector<Property>search:: searchProperties(const vector<Property>& properties, co
             found = true;
         }
     }
-    if (!found) {
+  /*  if (!found) {
         cout << "Not Found!"<<endl;
-    }
+    }*/
     return Result;
 }
-vector<Property>search::searchByLocation(const vector<Property>& properties, const string& location = "") {
+vector<Property>search::searchByLocation(const vector<Property>& properties, const string& location) {
     vector<Property> locationResult;
     bool found = false;
     for (auto& property : properties) {
@@ -46,12 +46,12 @@ vector<Property>search::searchByLocation(const vector<Property>& properties, con
         }
        
     }
-    if (!found) {
+  /*  if (!found) {
         cout << "Not Found Location Like This!" << endl;
-    }
+    }*/
     return locationResult;
 }
-vector<Property>search::searchByPrices(const vector<Property>& properties, double lowerPrice = 0, double higherPrice = 1000000000) {
+vector<Property>search::searchByPrices(const vector<Property>& properties, double lowerPrice, double higherPrice) {
     vector<Property> PriceResult;
     bool found = false;
     for (auto& property : properties) {
@@ -65,12 +65,12 @@ vector<Property>search::searchByPrices(const vector<Property>& properties, doubl
         }
        
     }
-    if (!found) {
+  /*  if (!found) {
         cout << "Not Found Properties Match your Price Search!" << endl;
-    }
+    }*/
     return PriceResult;
 }
-vector<Property>search::searchByType(const vector<Property>& properties, const string& type = "") {
+vector<Property>search::searchByType(const vector<Property>& properties, const string& type) {
     vector<Property> TypeResult;
     bool found = false;
     for (auto& property : properties) {
@@ -85,8 +85,8 @@ vector<Property>search::searchByType(const vector<Property>& properties, const s
         }
         
     }
-    if (!found) {
+   /* if (!found) {
         cout << "Not Found This Type Of Properties!" << endl;
-    }
+    }*/
     return TypeResult;
 }
