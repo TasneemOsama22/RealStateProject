@@ -36,8 +36,8 @@ int main() {
              cin >> type;
              
                  for (const auto& prop : s.searchProperties(properties, location, lowerPrice, higherPrice, type)) {
-                     cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
-                         "\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t" << "Number of Bathrooms:" << prop.getBedrooms() << "\t" << "Property Area:" << prop.getArea() << endl;
+                     cout << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location:" << prop.getLocation() << "\t\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                         "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << "Property Area:" << prop.getArea() << endl;
                  }
                  break;
          case 2:
@@ -45,8 +45,8 @@ int main() {
              cin >> location;
                  for (const auto& prop : s.searchByLocation(properties, location)) {
 
-                     cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
-                         "\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t"<<"Number of Bathrooms:"<<prop.getBedrooms()<<"\t"<< "Property Area:" << prop.getArea() << endl;
+                     cout <<"\n\n" << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                         "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t\t"<<"Number of Bathrooms:"<<prop.getBathrooms()<<"\t\t"<< "Property Area:" << prop.getArea() << endl;
                  }
                  break;
          case 3:
@@ -55,16 +55,16 @@ int main() {
              cout << "Higher Price:";
              cin >> higherPrice;
                  for (const auto& prop : s.searchByPrices(properties, lowerPrice, higherPrice)) {
-                     cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
-                         "\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t" << "Number of Bathrooms:" << prop.getBedrooms() << "\t" << "Property Area:" << prop.getArea() << endl;
+                     cout <<"\n\n" << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                         "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << "Property Area:" << prop.getArea() << endl;
                  }
                  break;
          case 4:
              cout << "Type:";
              cin >> type;
                  for (const auto& prop : s.searchByType(properties, type)) {
-                     cout << "Owner User Name:" << prop.getOwnerUsername() << "\t" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
-                         "\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t"<<"Number of Bathrooms:"<<prop.getBedrooms()<<"\t"<< "Property Area:" << prop.getArea() << endl;
+                     cout <<"\n\n" << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                         "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms()<<"\t\t"<<"Number of Bathrooms:"<<prop.getBathrooms()<<"\t\t"<< "Property Area:" << prop.getArea() << endl;
                  }
                  break;
          default:

@@ -6,11 +6,19 @@ using namespace std;
 
 
 
-Property::Property(const std::string& id, const std::string& title, double price, const std::string& location, const std::string& owner, double area, int bedrooms, int bathrooms, const std::string& type)
+Property::Property(const std::string& id, const std::string& title, double price,
+    const std::string& location, const std::string& owner, double area,
+    int bedrooms, int bathrooms, const std::string& type)
+    : id(id), title(title), price(price), location(location), ownerName(owner),
+    area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status), type(type)
 {
 }
-Property::Property(const std::string& title, double price, const std::string& location,
-    const std::string& owner, double area, int bedrooms, int bathrooms, PropertyStatus status, const std::string& type)
+
+Property::Property(const std::string& title, double price,
+    const std::string& location, const std::string& owner, double area,
+    int bedrooms, int bathrooms, PropertyStatus status, const std::string& type)
+    : title(title), price(price), location(location), ownerName(owner),
+    area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status), type(type)
 {
 }
 
@@ -36,17 +44,17 @@ string Property::getOwnerUsername() const {
 
 double Property::getArea() const
 {
-    return 0.0;
+    return area;
 }
 
 int Property::getBedrooms() const
 {
-    return 0;
+    return bedrooms;
 }
 
 int Property::getBathrooms() const
 {
-    return 0;
+    return bathrooms;
 }
 
 string Property::getType() const {

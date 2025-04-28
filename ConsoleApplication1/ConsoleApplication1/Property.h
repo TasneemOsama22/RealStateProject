@@ -21,6 +21,7 @@ public:
     Property(const std::string& id, const std::string& title, double price,
         const std::string& location, const std::string& owner, double area,
         int bedrooms, int bathrooms,const std::string& type);
+
     Property(const std::string& title, double price,
         const std::string& location, const std::string& owner, double area,
         int bedrooms, int bathrooms, PropertyStatus status, const std::string& type);
