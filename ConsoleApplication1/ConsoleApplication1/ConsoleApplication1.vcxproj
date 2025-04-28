@@ -132,6 +132,7 @@
     <ClCompile Include="search.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConsoleApplication1.h" />
     <ClInclude Include="Property.h" />
     <ClInclude Include="search.h" />
   </ItemGroup>

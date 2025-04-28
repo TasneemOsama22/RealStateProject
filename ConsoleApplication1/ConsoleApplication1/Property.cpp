@@ -9,7 +9,7 @@ using namespace std;
 Property::Property(const std::string& id, const std::string& title, double price,
     const std::string& location, const std::string& owner, double area,
     int bedrooms, int bathrooms, const std::string& type)
-    : id(id), title(title), price(price), location(location), ownerName(owner),
+    : id(id), title(title), price(price), targetType(location), ownerName(owner),
     area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status), type(type)
 {
 }
@@ -17,7 +17,7 @@ Property::Property(const std::string& id, const std::string& title, double price
 Property::Property(const std::string& title, double price,
     const std::string& location, const std::string& owner, double area,
     int bedrooms, int bathrooms, PropertyStatus status, const std::string& type)
-    : title(title), price(price), location(location), ownerName(owner),
+    : title(title), price(price), targetType(location), ownerName(owner),
     area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status), type(type)
 {
 }
@@ -35,7 +35,7 @@ double Property::getPrice() const {
 }
 
 string Property::getLocation() const {
-    return location;
+    return targetType;
 }
 
 string Property::getOwnerUsername() const {
@@ -76,7 +76,7 @@ void Property::setPrice(double newPrice) {
 }
 
 void Property::setLocation(const string& newLocation) {
-    location = newLocation;
+    targetType = newLocation;
 }
 
 void Property::setOwnerUsername(const string& newOwner) {
@@ -100,7 +100,7 @@ void Property::setType(const string& newType) {
 }
 string Property::toFileString() const {
 
-    return id + "," + title + "," + to_string(price) + "," + location + "," + ownerName;
+    return id + "," + title + "," + to_string(price) + "," + targetType + "," + ownerName;
 }
 
 void Property::fromFileString(const std::string& line) {
@@ -109,7 +109,7 @@ void Property::fromFileString(const std::string& line) {
     getline(SS, title, ',');
     string priceStr; //take price as string to the file
     getline(SS, priceStr, ',');
-    getline(SS, location, ',');
+    getline(SS, targetType, ',');
     getline(SS, ownerName);
     try {
         price = stod(priceStr); //to make the price value double 
