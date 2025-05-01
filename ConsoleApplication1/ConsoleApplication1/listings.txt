@@ -1,0 +1,10 @@
+1003|Beachfront Chalet|Chalet|Heliopolis|1.5e+06|Alice White|user103|3|2|220|Pending|1
+1005|Modern Duplex|Duplex|New Cairo|950000|Mike Brown|user105|3|2|140|Approved|1
+1007|Cozy Chalet|Chalet|North Coast|1.3e+06|Emma Wilson|user107|2|2|200|Approved|1
+1009|Downtown Apartment|Apartment|New Cairo|1.1e+06|Olivia Clark|user109|3|2|150|Approved|1
+1010|Private Villa|Villa|Heliopolis|4e+06|Noah Adams|user110|6|5|550|Pending|1
+1008|Student Studio|Studio|Zayed City|300000|Liam Davis|user108|1|1|60|Pending|1
+1006|Family Villa|Villa|6th October|2.8e+06|Sarah Green|user106|4|3|380|Pending|1
+1002|Luxury Villa|Villa|Zayed City|3.5e+07|Jane Smith|user102|5|4|450|Approved|0
+1001|Cozy Apartment|Apartment|New Cairo|850000|John Doe|user101|2|1|120|Pending|0
+1004|Compact Farmhouse|Farmhouse|Maadi|400000|Bob Johnson|user104|1|1|80|Rejected|0
