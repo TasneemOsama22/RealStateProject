@@ -1,2 +1,6 @@
 default001,Villa,100000.000000,City1,person
 default002,Apartment,75000.000000,City2,person2
+P001,Beach Villa,2500000,Malibu,admin
+P002,City Apartment,1200000,New York,superadmin
+P003,Villa,10000000,C1,anotherperson
+P004,Apartment4,750002222.00,City25,person4
