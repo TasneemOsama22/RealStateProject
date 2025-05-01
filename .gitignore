@@ -1,4 +1,10 @@
 *.vs
+User.h
+User.cpp
+Property.h
+Property.cpp
+FileHandler.h
+FileHandler.cpp
 
 # Prerequisites
 *.d

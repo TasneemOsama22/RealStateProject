@@ -7,6 +7,7 @@
 #include <regex>
 
 using namespace std;
+
 void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
     string name, email, password;
 
@@ -31,8 +32,7 @@ void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<
         getline(ss, tempName, ',');
         getline(ss, tempEmail, ',');
         getline(ss, tempPassword, ',');
-        getline(ss, tempType);
-
+        getline(ss, tempType, ',');
         if (email == tempEmail) {
             emailExists = true;
             break;
@@ -65,26 +65,21 @@ void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<
         adminMap[uniqueID] = newAdmin;
     }
 
-
+    // Append new account to file 
     ofstream outFile("accounts.txt", ios::app);
     if (!outFile.is_open()) {
         cout << "Error opening file for saving accounts.\n";
         return;
     }
 
-    if (type == "user") {
-        outFile << uniqueID << "," << name << "," << email << "," << password << ",user\n";
-    }
-    else {
-        outFile << uniqueID << "," << name << "," << email << "," << password << ",admin\n";
-    }
+
+    outFile << uniqueID << "," << name << "," << email << "," << password << "," << type
+        << ",0,0,0" << endl;
 
     outFile.close();
 
-
     cout << "Account registered successfully as a " << type << "! Your ID is " << uniqueID << ".\n";
 }
-
 
 bool Register::isEmailValid(const string& email) {
     const regex pattern(R"((\w+)(\.{0,1})(\w*)@(\w+)\.(\w+))");
@@ -120,7 +115,7 @@ string Register::generateUniqueID(const string& type) {
             getline(ss, name, ',');
             getline(ss, email, ',');
             getline(ss, password, ',');
-            getline(ss, userType);
+            getline(ss, userType, ',');
 
             if ((type == "user" && id.substr(0, 3) == "USR") ||
                 (type == "admin" && id.substr(0, 3) == "ADM")) {
@@ -134,5 +129,3 @@ string Register::generateUniqueID(const string& type) {
 
     return (type == "user" ? "USR" : "ADM") + to_string(maxID);
 }
-
-

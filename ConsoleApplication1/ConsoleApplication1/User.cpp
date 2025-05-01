@@ -20,16 +20,32 @@ User::User(string userId, string pass) {
 }
 
 string User::toFileString() const {
-    return username + "," + password + "," + (isAdmin ? "1" : "0");
+    return userId + "," + username + "," + email + "," + password + "," +
+        (isAdmin ? "1" : "0") + "," +
+        (isBanned ? "1" : "0") + "," +
+        (IsBlocked ? "1" : "0") + "," +
+        to_string(blockDaysRemaining);
 }
+
 void User::fromFileString(const string& line) {
     stringstream SS(line);
+    string adminFlag, bannedFlag, blockedFlag, blockDaysStr;
+
+    getline(SS, userId, ',');
     getline(SS, username, ',');
+    getline(SS, email, ',');
     getline(SS, password, ',');
-    string adminFlag; //carry 1 or 0
-    getline(SS, adminFlag);
-    isAdmin = (adminFlag == "1"); //check if its 1 then the isAdmin value is true otherwise its false
+    getline(SS, adminFlag, ',');
+    getline(SS, bannedFlag, ',');
+    getline(SS, blockedFlag, ',');
+    getline(SS, blockDaysStr);
+
+    isAdmin = (adminFlag == "1");
+    isBanned = (bannedFlag == "1");
+    IsBlocked = (blockedFlag == "1");
+    blockDaysRemaining = stoi(blockDaysStr);
 }
+
 bool User::checkPassword(const string& p) const {
     return password == p;
 }

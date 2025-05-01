@@ -166,7 +166,7 @@ void Admin::ApproveAd(Property p, vector<Property>& ApprovedAds, vector<Property
     }
 
     ApprovedAds.push_back(p);
-    Users[UserId].InboxMesseges.push("Your property listing has been approved and is now visible to other users. Good luck!");
+    Users[UserId].InboxMessages.push("Your property listing has been approved and is now visible to other users. Good luck!");
 
 
     if (!Users[UserId].UserProperty.empty()) {
@@ -182,7 +182,7 @@ void Admin::RejectAd(Property p, string UserId, vector<Property>& PendingAds, st
         }
     }
 
-    Users[UserId].InboxMesseges.push("Warning! Your last Property listing has been rejected. Reason: " + reason);
+    Users[UserId].InboxMessages.push("Warning! Your last Property listing has been rejected. Reason: " + reason);
 
     int warnings = Users[UserId].getWarningCount();
     Users[UserId].setWarningCount(++warnings);
