@@ -16,19 +16,16 @@ int main() {
         FileHandler::loadProperties(properties, "../properties.txt");
 
         
-        users["admin"] = User("admin", "123", true);
-        users["superadmin"] = User("superadmin", "12345", true);
-
-        
         FileHandler::saveUsers(users, "../users.txt");
         cout << "Users saved to users.txt\n";
 
-        
-        if (properties.empty()) {
-            properties.emplace_back("default001", "Villa", 100000, "City1", "admin");
-            properties.emplace_back("default002", "Apartment", 75000.0, "City2", "superadmin");
+
+            properties.emplace_back("P001", "Beach Villa", 2500000, "Malibu", "admin");
+            properties.emplace_back("P002", "City Apartment", 1200000, "New York", "superadmin");
+            properties.emplace_back("P003", "Mountain Cabin", 750000, "Aspen", "admin");
+          
             cout << "Default properties added\n";
-        }
+        
 
         
         FileHandler::saveProperties(properties, "../properties.txt");
