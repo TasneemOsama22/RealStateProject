@@ -1,34 +1,52 @@
 #include <iostream>
-#include "AccCtrl.h"
 #include "Register.h"
 #include "Login.h"
+#include "User.h"
+#include "Admin.h"
 #include <unordered_map>
 #include <vector>
 
 using namespace std;
 
 int main() {
+    unordered_map<string, User> userMap;
+    unordered_map<string, Admin> adminMap;
+
     Register reg;
     Login log;
     int choice;
 
     do {
-        std::cout << "\n1. Register\n2. Login\n0. Exit\nChoose option: ";
-        std::cin >> choice;
-        std::cin.ignore(); // clear newline from input buffer
+        cout << "\n1. Register\n2. Login\n0. Exit\nChoose option: ";
+        cin >> choice;
+        cin.ignore(); // Clear newline from input buffer
 
         switch (choice) {
         case 1:
-            reg.registerUser();
+            reg.registerUser(userMap, adminMap);
             break;
-        case 2:
-            log.loginUser();
+        case 2: {
+            string loggedInId;
+            string accountType;
+
+            bool success = log.loginUser(userMap, adminMap, loggedInId, accountType);
+            if (success) {
+                if (accountType == "admin") {
+                    cout << "Admin logged in with ID: " << loggedInId << endl;
+                    // TODO: Call admin menu or features here
+                }
+                else {
+                    cout << "User logged in with ID: " << loggedInId << endl;
+                    // TODO: Call user menu or features here
+                }
+            }
             break;
+        }
         case 0:
-            std::cout << "Goodbye!\n";
+            cout << "Goodbye!\n";
             break;
         default:
-            std::cout << "Invalid choice!\n";
+            cout << "Invalid choice!\n";
         }
     } while (choice != 0);
 

@@ -1,19 +1,25 @@
 #include "Login.h"
-#include "Account.h"
+#include "User.h"
+#include "Admin.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <conio.h>
+#include <unordered_map>
+
 using namespace std;
 
-bool Login::loginUser() {
+bool Login::loginUser(unordered_map<string, User>& userMap,
+    unordered_map<string, Admin>& adminMap,
+    string& loggedInId,
+    string& accountType) {
     string email, password;
 
     cout << "Enter email: ";
     getline(cin, email);
 
     cout << "Enter password: ";
-    password = getMaskedPassword();  // Fixed: removed redefinition
+    password = getMaskedPassword();  
 
     ifstream inFile("accounts.txt");
     if (!inFile.is_open()) {
@@ -23,18 +29,22 @@ bool Login::loginUser() {
 
     string line;
     while (getline(inFile, line)) {
-        stringstream ss(line);
-        string name, fileEmail, filePassword, type;
+        string id, name, fileEmail, filePassword, type;
 
+        stringstream ss(line);
+        getline(ss, id, ',');
         getline(ss, name, ',');
         getline(ss, fileEmail, ',');
         getline(ss, filePassword, ',');
-        getline(ss, type, '\n');
+        getline(ss, type);
 
         if (email == fileEmail && password == filePassword) {
-            Account acc(name, fileEmail, filePassword, type);
+            loggedInId = id;
+            accountType = type;
+
             cout << "\nLogin successful!\n";
-            acc.displayProfile();
+            cout << "Welcome, " << name << " (" << type << ")\n";
+
             return true;
         }
     }
@@ -46,9 +56,8 @@ bool Login::loginUser() {
 string Login::getMaskedPassword() {
     string password;
     char ch;
-
-    while ((ch = _getch()) != '\r') { 
-        if (ch == '\b') { 
+    while ((ch = _getch()) != '\r') {  // Enter key
+        if (ch == '\b') { // Backspace
             if (!password.empty()) {
                 password.pop_back();
                 cout << "\b \b";
