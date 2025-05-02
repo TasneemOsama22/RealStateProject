@@ -46,7 +46,7 @@ int main() {
                             }
                         }
                         else {
-                            cout << "Your Property Search is not found!" << endl;
+                            cout << "\nYour Property Search is not found!" << endl;
                         }
                         break;
                     }
@@ -62,7 +62,7 @@ int main() {
                             }
                         }
                         else {
-                            cout << "Not Found Any Property Has Location Like That!" << endl;
+                            cout << "\nNot Found Any Property Has Location Like That!" << endl;
                         }
                         break;
                     }
@@ -78,7 +78,7 @@ int main() {
                             }
                         }
                         else {
-                            cout << "Not Found Properties Match your Price Search! " << endl;
+                            cout << "\nNot Found Properties Match your Price Search! " << endl;
                         }
                         break;
                     }
@@ -93,7 +93,7 @@ int main() {
                             }
                         }
                         else {
-                            cout << "Not Found This Type Of Properties!" << endl;
+                            cout << "\nNot Found This Type Of Properties!" << endl;
                         }
                         break;
                     }
@@ -102,9 +102,7 @@ int main() {
                             cout << "Press \"1\" if you want to searching By square footage" << endl;
                             cout << "Press \"2\" if you want to searching By Number Of bedrooms" << endl;
                             std::cin >> index;
-                            switch (index)
-                            {
-                            case 1: {
+                           if(index==1){
                                 double area;
                                 cout << " Enter Your Target square footage:";
                                 std::cin >> area;
@@ -116,28 +114,27 @@ int main() {
                                     }
                                 }
                                 else {
-                                    cout << "Not Found Property match your area!" << endl;
+                                    cout << "\nNot Found Property match your area!" << endl;
                                 }
                                 break;
                             }
-                            case 2:
-                            {
-                                int numOfBedRooms;
-                                cout << "Enter number of bedRooms you want to Search about:";
-                                std::cin >> numOfBedRooms;
-                                vector<Property> bedroomsResult = s.binarySearchByNumOfBedRooms(properties, numOfBedRooms);
-                                if (!bedroomsResult.empty()) {
-                                    for (const auto& prop : bedroomsResult) {
-                                        cout << "\n\n" << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
-                                            "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
-                                    }
-                                }
-                                else {
-                                    cout << "Not Found Any Property Has this Number Of BedRooms!" << endl;
-                                }
-                                break;
-                            }
-                            }
+                           if (index == 2)
+                           {
+                               int numOfBedRooms;
+                               cout << "Enter number of bedRooms you want to Search about:";
+                               std::cin >> numOfBedRooms;
+                               vector<Property> bedroomsResult = s.binarySearchByNumOfBedRooms(properties, numOfBedRooms);
+                               if (!bedroomsResult.empty()) {
+                                   for (const auto& prop : bedroomsResult) {
+                                       cout << "\n\n" << "Owner User Name:" << prop.getOwnerUsername() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                                           "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                                   }
+                               }
+                               else {
+                                   cout << "\nNot Found Any Property Has this Number Of BedRooms!" << endl;
+                               }
+                               break;
+                           }
                            }
                     default: {
                         cout << "invalid Choice!" << endl;
