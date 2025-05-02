@@ -10,7 +10,7 @@ private:
     string id;
     string title;
     double price;
-    string targetType;
+    string location;
     string ownerName;
     double area;
     int bedrooms, bathrooms;

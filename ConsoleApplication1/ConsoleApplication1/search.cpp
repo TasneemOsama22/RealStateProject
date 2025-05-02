@@ -44,6 +44,16 @@ void search::sortByType(vector<Property>& properties) {
 }
 
 
+void search::sortByArea(vector<Property>& properties) {
+    sort(properties.begin(), properties.end(), [](const Property& a, const Property& b) {
+        return a.getArea() < b.getArea(); });
+}
+void search::sortByNumOfBedRooms(vector<Property>& properties) {
+    sort(properties.begin(), properties.end(), [](const Property& a, const Property& b) {
+        return a.getBedrooms() < b.getBedrooms(); });
+}
+
+
 vector<Property> search::binarySearchByLocation(vector<Property>& properties, const string& location)
 {
     vector<Property> result;
@@ -133,6 +143,67 @@ vector<Property> search::binarySearchByType(vector<Property>& properties, const 
         }
         return result;
     }
+
+
+vector<Property> search::binarySearchByArea(vector<Property>& properties, double area) {
+    vector<Property> result;
+    int low = 0, high = properties.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (properties[mid].getArea() == area) {
+            int left = mid;
+            int right = mid + 1;
+            result.push_back(properties[mid]);
+            while (left > 0 && properties[left - 1].getArea() == area) {
+                result.push_back(properties[left - 1]);
+                left--;
+            }
+            while (right < properties.size() && properties[right].getArea() == area) {
+                result.push_back(properties[right]);
+                right++;
+            }
+            break;
+        }
+        else if (properties[mid].getArea() < area) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
+    return result;
+}
+vector<Property> search::binarySearchByNumOfBedRooms(vector<Property>& properties, int numOfBedRooms){
+    vector<Property> result;
+    int low = 0, high = properties.size() - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (properties[mid].getBedrooms() == numOfBedRooms) {
+            int left = mid;
+            int right = mid + 1;
+            result.push_back(properties[mid]);
+            while (left > 0 && properties[left - 1].getBedrooms() == numOfBedRooms) {
+                result.push_back(properties[left - 1]);
+                left--;
+            }
+            while (right < properties.size() && properties[right].getBedrooms() == numOfBedRooms) {
+                result.push_back(properties[right]);
+                right++;
+            }
+            break;
+        }
+        else if (properties[mid].getBedrooms() < numOfBedRooms) {
+            low = mid + 1;
+        }
+        else {
+            high = mid - 1;
+        }
+    }
+    return result;
+}
+
 //vector<Property>search::searchByLocation(const vector<Property>& properties, const string& location) {
 //    vector<Property> locationResult;
 //    bool found = false;
