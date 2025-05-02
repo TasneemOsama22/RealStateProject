@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <iomanip>
 using namespace std;
 Admin::Admin(string Id, string password) {
     this->Id = Id;
@@ -217,12 +218,102 @@ void Admin::banUser(string UserId, unordered_map <string, User>& Users)
     Users[UserId].setCanPost(false);
     Users[UserId].setIsBanned(true);
     Users[UserId].InboxMesseges.push("Dear user\nYour account has been permanently banned due to serious violations of our platform's rules and regulations.\n_The Real Estate Portal Team.");
-    //delete User's Properties from the approved list
+    // Delete user's properties from the approved list
+    ApprovedAds.erase(remove_if(ApprovedAds.begin(), ApprovedAds.end(),
+        [&](const Property& prop) {
+            return prop.getUserId() == UserId;
+        }),
+        ApprovedAds.end());
+
+    // Delete user's properties from the pending list
+    PendingAds.erase(remove_if(PendingAds.begin(), PendingAds.end(),
+        [&](const Property& prop) {
+            return prop.getUserId() == UserId;
+        }),
+        PendingAds.end());
 }
 void Admin::unbanUser(string UserId, unordered_map <string, User>& Users) {
     Users[UserId].InboxMesseges.push("Dear user\nWe would like to inform you that your account has been successfully unbanned.\nYou can now access all platform features, including posting new property listings.\n\nWelcome back!\n_The Real Estate Portal Team");
     Users[UserId].setCanPost(true);
     Users[UserId].setIsBanned(false);
+}
+void Admin::ModerateUserActivity(unordered_map<string, User>& Users) {
+    cout << "\n====== User Moderation ======\n";
+    cout << "Entre User Id to manage: ";
+    string Id;
+    cin >> Id;
+    if (Users.find(Id) == Users.end()) {
+        cout << "User not found.\n";
+        return;
+    }
+    User& user = Users[userId];
+    cout << left
+        << setw(15) << "Manging User"
+        << setw(15) << "UserID"
+        << setw(15) << "Warnings"
+        << setw(15) << "Blocked"
+        << setw(15) << "Banned";
+
+    cout << string(80, '-') << endl;
+
+    cout << left
+        << setw(15) << user.username
+        << setw(15) << user.UserId
+        << setw(15) << user.getWarningCount()
+        << setw(15) << (user.getIsBlocked() ? "Yes" : "No")
+        << setw(15) << (user.getIsBanned() ? "Yes" : "No");
+
+    cout << "\nChoose an action:\n";
+    cout << "1." << "Add warning\n";
+    cout << "2." << "Remove warning\n";
+    cout << "3." << "Block user\n";
+    cout << "4." << "Unblock user\n";
+    cout << "5." << "Ban user\n";
+    cout << "6." << "Unban user\n";
+    cout << "Enter your choice (1-6): ";
+    int choice;
+    cin >> choice;
+    while (choise < 1 || choise>6) {
+        cout << "Invalide choice\nEnter your choice (1-6): ";
+        cin >> choice;
+    }
+    switch (choice)
+    {
+    case 1:
+        user.setWarningCount(user.getWarningCount() + 1);
+        if (user.getWarningCount() == 3) {
+            blockUser(Id, Users);
+            user.setWarningCount(0);
+        }
+        cout << "Warning added.\n";
+        break;
+    case 2:
+        if (user.getWarningCount() > 0) {
+            user.setWarningCount(user.getWarningCount() - 1);
+            cout << "Warning removed.\n";
+        }
+        else {
+            cout << "User has no warnings.\n";
+        }
+        break;
+    case 3:
+        blockUser(Id, Users);
+        break;
+    case 4:
+        unblockUser(Id, Users);
+        break;
+    case 5:
+        banUser(Id, Users);
+        break;
+    case 6:
+        unbanUser(Id, Users);
+        break;
+    default:
+        cout << "Invalid choice.\n";
+        break;
+    }
+
+        
 }
 
 

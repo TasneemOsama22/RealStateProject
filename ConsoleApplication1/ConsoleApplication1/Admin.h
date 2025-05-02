@@ -40,5 +40,8 @@ public:
     // View Approved ads
     void ViewApprovedAds(vector<Property>& ApprovedAds);
 
+    //Moderate User's Activities
+    void ModerateUserActivity(unordered_map<string, User>& Users);
+
 };
 
