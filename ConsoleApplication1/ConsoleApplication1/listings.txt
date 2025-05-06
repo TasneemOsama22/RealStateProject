@@ -1,10 +1,10 @@
-1001|Cozy Apartment|Apartment|New Cairo|85000|John Doe|user101|2|1|120|Pending|0
-1002|Luxury Villa|Villa|Zayed City|35000|Jane Smith|user102|5|4|450|Approved|0
 1003|Beachfront Chalet|Chalet|Heliopolis|15000|Alice White|user103|3|2|220|Approved|1
-1004|Compact Farmhouse|Farmhouse|Maadi|40000|Bob Johnson|user104|1|1|80|Rejected|0
 1005|Modern Duplex|Duplex|New Cairo|95000|Mike Brown|user105|3|2|140|Approved|1
-1006|Family Villa|Villa|6th October|28000|Sarah Green|user106|4|3|380|Pending|1
-1007|Cozy Chalet|Chalet|North Coast|13000|Emma Wilson|user107|2|2|200|Approved|1
-1008|Student Studio|Studio|Zayed City|30000|Liam Davis|user108|1|1|60|Pending|1
 1009|Downtown Apartment|Apartment|New Cairo|11000|Olivia Clark|user109|3|2|150|Approved|1
-1010|Private Villa|Villa|Heliopolis|40000|Noah Adams|user110|6|5|550|Pending|1
+1007|Cozy Chalet|Chalet|North Coast|13000|Emma Wilson|user107|2|2|200|Approved|0
+1002|Luxury Villa|Villa|Zayed City|35000|Jane Smith|user102|5|4|450|Approved|0
+1006|Family Villa|Villa|6th October|28000|Sarah Green|user106|4|3|380|Pending|1
+1008|Student Studio|Studio|Zayed City|30000|Liam Davis|user108|1|1|60|Pending|1
+1001|Cozy Apartment|Apartment|New Cairo|85000|John Doe|user101|2|1|120|Pending|0
+1010|Private Villa|Villa|Heliopolis|40000|Noah Adams|user110|6|4|550|Pending|1
+1004|Compact Farmhouse|Farmhouse|Maadi|40000|Bob Johnson|user104|1|1|80|Rejected|0

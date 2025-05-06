@@ -1,5 +1,4 @@
 #include <iostream>
-#include <map>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -9,9 +8,12 @@
 
 using namespace std;
 
-// Global Variables 
-map<int, Property> approvedListings;
-map<int, Property> allListings;
+
+vector<Property> approvedProperties;
+vector<Property> pendingProperties;
+vector<Property> rejectedProperties;
+
+
 vector<string> types = {
     "Apartment",
     "Villa",
@@ -32,7 +34,6 @@ vector<string> locations = {
     "Nasr City",
 };
 
-// Function Declarations
 void loadListings();
 void saveListings();
 int generateNewId();
@@ -46,18 +47,18 @@ void toggleHighlightProperty();
 void showAllProperties();
 void adminDashboard();
 
-// Function Definitions 
 
 
 int generateNewId() {
-    if (allListings.empty()) return 1001;
+    int maxId = 1000;
 
-    int maxId = 0;
-    for (const auto& pair : allListings) {
-        if (pair.first > maxId) {
-            maxId = pair.first;
-        }
-    }
+    for (const Property& p : approvedProperties)
+        maxId = max(maxId, p.getId());
+    for (const Property& p : pendingProperties)
+        maxId = max(maxId, p.getId());
+    for (const Property& p : rejectedProperties)
+        maxId = max(maxId, p.getId());
+
     return maxId + 1;
 }
 
@@ -73,13 +74,14 @@ void loadListings() {
     while (getline(file, line)) {
         Property p;
         p.fromFileString(line);
-        allListings[p.getId()] = p;  
 
-       
-        if (p.getStatus() == Approved) {
-            approvedListings[p.getId()] = p;
+        switch (p.getStatus()) {
+        case Approved: approvedProperties.push_back(p); break;
+        case Pending: pendingProperties.push_back(p); break;
+        case Rejected: rejectedProperties.push_back(p); break;
         }
     }
+
     file.close();
 }
 
@@ -90,9 +92,12 @@ void saveListings() {
         return;
     }
 
-    for (const auto& pair : allListings) {
-        file << pair.second.toFileString() << endl;
-    }
+    for (const Property& p : approvedProperties)
+        file << p.toFileString() << endl;
+    for (const Property& p : pendingProperties)
+        file << p.toFileString() << endl;
+    for (const Property& p : rejectedProperties)
+        file << p.toFileString() << endl;
 
     file.close();
 }
@@ -133,7 +138,6 @@ string chooseLocation() {
     }
 }
 
-
 void addProperty() {
     Property p;
     cout << "\n--- Add New Property ---\n";
@@ -150,8 +154,12 @@ void addProperty() {
     p.setLocation(chooseLocation());
 
     double price;
-    cout << "Enter Price: ";
-    cin >> price;
+    do {
+        cout << "Enter Price: ";
+        cin >> price;
+        if (price < 0)
+            cout << "Price cannot be negative. Try again.\n";
+    } while (price < 0);
     p.setPrice(price);
 
     cin.ignore();
@@ -166,304 +174,419 @@ void addProperty() {
     p.setUserId(userId);
 
     double area;
-    cout << "Enter Area (Square meter): ";
-    cin >> area;
+    do {
+        cout << "Enter Area (Square meter): ";
+        cin >> area;
+        if (area < 0)
+            cout << "Area cannot be negative. Try again.\n";
+    } while (area < 0);
     p.setArea(area);
 
     int bedrooms;
-    cout << "Enter Number of Bedrooms: ";
-    cin >> bedrooms;
+    do {
+        cout << "Enter Number of Bedrooms: ";
+        cin >> bedrooms;
+        if (bedrooms < 0)
+            cout << "Bedrooms cannot be negative. Try again.\n";
+    } while (bedrooms < 0);
     p.setBedrooms(bedrooms);
 
     int bathrooms;
-    cout << "Enter Number of Bathrooms: ";
-    cin >> bathrooms;
+    do {
+        cout << "Enter Number of Bathrooms: ";
+        cin >> bathrooms;
+        if (bathrooms < 0)
+            cout << "Bathrooms cannot be negative. Try again.\n";
+    } while (bathrooms < 0);
     p.setBathrooms(bathrooms);
 
     int isHighlighted;
-    cout << "Highlight this property? (1: Yes, 0: No): ";
-    cin >> isHighlighted;
-
-    while (isHighlighted != 1 && isHighlighted != 0) {
-        cout << "Invalid input. Please enter 1 (Yes) or 0 (No): ";
+    do {
+        cout << "Highlight this property? (1: Yes, 0: No): ";
         cin >> isHighlighted;
-    }
+        if (isHighlighted != 0 && isHighlighted != 1)
+            cout << "Invalid input. Please enter 1 (Yes) or 0 (No).\n";
+    } while (isHighlighted != 0 && isHighlighted != 1);
     p.setHighlighted(isHighlighted == 1);
 
-    p.setStatus(Approved); 
-
-   
-    approvedListings[p.getId()] = p;
-    allListings[p.getId()] = p;
+    p.setStatus(Pending);
+    pendingProperties.push_back(p);
 
     saveListings();
 
     cout << "\nProperty added successfully! ID: " << p.getId() << "\n";
 }
 
-
 void editProperty() {
+    vector<Property>* selectedList = nullptr;
+    int choice1;
     cout << "\n--- Edit Property ---\n";
 
-    map<int, Property>* listingsToEdit = nullptr;
-
     while (true) {
-        int choice1;
-        cout << "Choose where to edit property:\n";
-        cout << "1. Edit in All Listings\n";
-        cout << "2. Edit in Approved Listings\n";
-        cout << "3. Back\n";
+        cout << "\nChoose the property list to edit from:\n";
+        cout << "1. Approved\n";
+        cout << "2. Pending\n";
+        cout << "3. Rejected\n";
         cout << "Enter your choice: ";
         cin >> choice1;
 
         if (choice1 == 1) {
-            listingsToEdit = &allListings;
+            selectedList = &approvedProperties;
             break;
         }
         else if (choice1 == 2) {
-            listingsToEdit = &approvedListings;
+            selectedList = &pendingProperties;
             break;
         }
         else if (choice1 == 3) {
-            cout << "Returning to main menu...\n";
-            return;
+            selectedList = &rejectedProperties;
+            break;
         }
         else {
             cout << "Invalid choice. Please try again.\n";
         }
     }
 
+    cout << "Enter the ID of the property to edit: ";
     int id;
-    cout << "\nEnter Property ID to Edit: ";
     cin >> id;
 
-    auto it = listingsToEdit->find(id);
-    if (it == listingsToEdit->end()) {
-        cout << "Property not found in selected listings.\n";
-        return;
+    for (size_t i = 0; i < selectedList->size(); ++i) {
+        if ((*selectedList)[i].getId() == id) {
+            Property& p = (*selectedList)[i];
+            cout << "Editing property with ID " << p.getId() << ":\n";
+
+            int choice;
+            do {
+                cout << "\nWhich property field would you like to edit?\n";
+                cout << "1. Title (" << p.getTitle() << ")\n";
+                cout << "2. Type (" << p.getType() << ")\n";
+                cout << "3. Location (" << p.getLocation() << ")\n";
+                cout << "4. Price (" << p.getPrice() << ")\n";
+                cout << "5. Owner Name (" << p.getOwnerName() << ")\n";
+                cout << "6. Area (" << p.getArea() << " Square meter)\n";
+                cout << "7. Bedrooms (" << p.getBedrooms() << ")\n";
+                cout << "8. Bathrooms (" << p.getBathrooms() << ")\n";
+                cout << "9. Status (" << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected")) << ")\n";
+                cout << "10. Exit\n";
+                cout << "Enter your choice: ";
+                cin >> choice;
+
+                cin.ignore();
+                switch (choice) {
+                case 1: {
+                    string newTitle;
+                    cout << "Enter new Title: ";
+                    getline(cin, newTitle);
+                    p.setTitle(newTitle);
+                    break;
+                }
+                case 2: {
+                    p.setType(chooseType());
+                    break;
+                }
+                case 3: {
+                    p.setLocation(chooseLocation());
+                    break;
+                }
+                case 4: {
+                    double newPrice;
+                    do {
+                        cout << "Enter new Price: ";
+                        cin >> newPrice;
+                        if (newPrice < 0)
+                            cout << "Price cannot be negative. Please enter a valid price.\n";
+                    } while (newPrice < 0);
+                    p.setPrice(newPrice);
+                    break;
+                }
+                case 5: {
+                    string newOwner;
+                    cout << "Enter new Owner Name: ";
+                    getline(cin, newOwner);
+                    p.setOwnerName(newOwner);
+                    break;
+                }
+                case 6: {
+                    double newArea;
+                    do {
+                        cout << "Enter new Area (Square meter): ";
+                        cin >> newArea;
+                        if (newArea < 0)
+                            cout << "Area cannot be negative. Please enter a valid area.\n";
+                    } while (newArea < 0);
+                    p.setArea(newArea);
+                    break;
+                }
+                case 7: {
+                    int newBedrooms;
+                    do {
+                        cout << "Enter new Bedrooms: ";
+                        cin >> newBedrooms;
+                        if (newBedrooms < 0)
+                            cout << "Bedrooms cannot be negative. Please enter a valid number.\n";
+                    } while (newBedrooms < 0);
+                    p.setBedrooms(newBedrooms);
+                    break;
+                }
+                case 8: {
+                    int newBathrooms;
+                    do {
+                        cout << "Enter new Bathrooms: ";
+                        cin >> newBathrooms;
+                        if (newBathrooms < 0)
+                            cout << "Bathrooms cannot be negative. Please enter a valid number.\n";
+                    } while (newBathrooms < 0);
+                    p.setBathrooms(newBathrooms);
+                    break;
+                }
+                case 9: {
+                    int newStatus;
+                    do {
+                        cout << "Enter new Status (0: Pending, 1: Approved, 2: Rejected): ";
+                        cin >> newStatus;
+                        if (newStatus < 0 || newStatus > 2)
+                            cout << "Invalid status. Please enter 0, 1, or 2.\n";
+                    } while (newStatus < 0 || newStatus > 2);
+
+                    if (newStatus != p.getStatus()) {
+                        Property updated = p;
+                        updated.setStatus(static_cast<PropertyStatus>(newStatus));
+
+                        switch (newStatus) {
+                        case Approved: approvedProperties.push_back(updated); break;
+                        case Pending: pendingProperties.push_back(updated); break;
+                        case Rejected: rejectedProperties.push_back(updated); break;
+                        }
+
+                        selectedList->erase(selectedList->begin() + i);
+
+                        cout << "Property moved to new list and updated.\n";
+                        saveListings();
+                        return;
+                    }
+                    break;
+                }
+                case 10:
+                    cout << "Exiting Edit Menu.\n";
+                    break;
+                default:
+                    cout << "Invalid choice. Try again.\n";
+                }
+            } while (choice != 10);
+
+            saveListings();
+            cout << "Property updated and saved.\n";
+            return;
+        }
     }
-
-    Property& p = it->second;
-    cout << "Editing: " << p.getTitle() << "\n";
-
-    int choice;
-    do {
-        cout << "\nWhich property field would you like to edit?\n";
-        cout << "1. Title (" << p.getTitle() << ")\n";
-        cout << "2. Type (" << p.getType() << ")\n";
-        cout << "3. Location (" << p.getLocation() << ")\n";
-        cout << "4. Price (" << p.getPrice() << ")\n";
-        cout << "5. Owner Name (" << p.getOwnerName() << ")\n";
-        cout << "6. Area (" << p.getArea() << " Square meter)\n";
-        cout << "7. Bedrooms (" << p.getBedrooms() << ")\n";
-        cout << "8. Bathrooms (" << p.getBathrooms() << ")\n";
-        cout << "9. Status (" << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected")) << ")\n";
-        cout << "10. Exit\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-        cin.ignore();
-
-        switch (choice) {
-        case 1: {
-            string newTitle;
-            cout << "Enter new Title: ";
-            getline(cin, newTitle);
-            p.setTitle(newTitle);
-            break;
-        }
-        case 2: {
-            p.setType(chooseType());
-
-            break;
-        }
-        case 3: {
-            p.setLocation(chooseLocation());
-            break;
-        }
-        case 4: {
-            double newPrice;
-            cout << "Enter new Price: ";
-            cin >> newPrice;
-            p.setPrice(newPrice);
-            break;
-        }
-        case 5: {
-            string newOwner;
-            cout << "Enter new Owner Name: ";
-            getline(cin, newOwner);
-            p.setOwnerName(newOwner);
-            break;
-        }
-        case 6: {
-            double newArea;
-            cout << "Enter new Area (Square meter): ";
-            cin >> newArea;
-            p.setArea(newArea);
-            break;
-        }
-        case 7: {
-            int newBedrooms;
-            cout << "Enter new Bedrooms: ";
-            cin >> newBedrooms;
-            p.setBedrooms(newBedrooms);
-            break;
-        }
-        case 8: {
-            int newBathrooms;
-            cout << "Enter new Bathrooms: ";
-            cin >> newBathrooms;
-            p.setBathrooms(newBathrooms);
-            break;
-        }
-        case 9: {
-            int newStatus;
-            cout << "Enter new Status (0: Pending, 1: Approved, 2: Rejected): ";
-            cin >> newStatus;
-            p.setStatus(static_cast<PropertyStatus>(newStatus));
-
-            if (p.getStatus() == Approved) {
-                approvedListings[p.getId()] = p;
-            }
-            else {
-                approvedListings.erase(p.getId());
-            }
-            break;
-        }
-        case 10:
-            cout << "Exiting Edit Menu.\n";
-            break;
-        default:
-            cout << "Invalid choice. Try again.\n";
-        }
-
-    } while (choice != 10);
-
-    saveListings();
-    cout << "Property updated and saved.\n";
+    cout << "Property not found.\n";
 }
 
 
 void removeProperty() {
-    map<int, Property>* listingsToRemove = nullptr;
+        vector<Property>* selectedList = nullptr;
+        int choice;
 
-    while (true) {
-        int choice1;
         cout << "\n--- Remove Property ---\n";
-        cout << "1. Remove from All Listings\n";
-        cout << "2. Remove from Approved Listings\n";
-        cout << "3. Back\n";
-        cout << "Enter your choice: ";
-        cin >> choice1;
 
-        if (choice1 == 1) {
-            listingsToRemove = &allListings;
-            break;
+        while (true) {
+            cout << "Select the list to remove from:\n";
+            cout << "1. Approved Properties\n";
+            cout << "2. Pending Properties\n";
+            cout << "3. Rejected Properties\n";
+            cout << "4. Back\n";
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            if (choice == 1) {
+                selectedList = &approvedProperties;
+                break;
+            }
+            else if (choice == 2) {
+                selectedList = &pendingProperties;
+                break;
+            }
+            else if (choice == 3) {
+                selectedList = &rejectedProperties;
+                break;
+            }
+            else if (choice == 4) {
+                cout << "Returning to main menu...\n";
+                return;
+            }
+            else {
+                cout << "Invalid choice. Please try again.\n";
+            }
         }
-        else if (choice1 == 2) {
-            listingsToRemove = &approvedListings;
-            break;
+
+        int id;
+        cout << "Enter Property ID to remove: ";
+        cin >> id;
+
+        bool found = false;
+        for (auto it = selectedList->begin(); it != selectedList->end(); ++it) {
+            if (it->getId() == id) {
+                selectedList->erase(it);
+                found = true;
+                break;
+            }
         }
-        else if (choice1 == 3) {
-            cout << "Returning to main menu...\n";
-            return;
+
+        if (found) {
+            saveListings();
+            cout << "Property removed successfully.\n";
         }
         else {
-            cout << "Invalid choice. Please try again.\n";
+            cout << "Property not found in the selected list.\n";
         }
     }
-
-    int id;
-    cout << "Enter Property ID to remove: ";
-    cin >> id;
-
-    if (listingsToRemove->erase(id)) {
-   
-        allListings.erase(id);
-        approvedListings.erase(id);
-
-        saveListings();
-        cout << "Property removed successfully.\n";
-    }
-    else {
-        cout << "Property not found in the selected listings.\n";
-    }
-}
-
 
 bool compareHighlighted(Property& a, Property& b) {
     return a.isHighlighted() > b.isHighlighted();
 }
 
 void toggleHighlightProperty() {
-    int id;
+    vector<Property>* selectedList = nullptr;
+    int choice;
+
     cout << "\n--- Toggle Highlight ---\n";
+
+    while (true) {
+        cout << "Select the list to toggle highlight from:\n";
+        cout << "1. Approved Properties\n";
+        cout << "2. Pending Properties\n";
+        cout << "3. Rejected Properties\n";
+        cout << "4. Back\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            selectedList = &approvedProperties;
+            break;
+        }
+        else if (choice == 2) {
+            selectedList = &pendingProperties;
+            break;
+        }
+        else if (choice == 3) {
+            selectedList = &rejectedProperties;
+            break;
+        }
+        else if (choice == 4) {
+            cout << "Returning to main menu...\n";
+            return;
+        }
+        else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+    }
+
+    int id;
     cout << "Enter Property ID: ";
     cin >> id;
 
-    auto it = approvedListings.find(id);
-    if (it != approvedListings.end()) {
-      
-        it->second.setHighlighted(!it->second.isHighlighted());
-
-       
-        auto itall = allListings.find(id);
-        if (itall != allListings.end()) {
-            itall->second.setHighlighted(it->second.isHighlighted());
+    for (Property& p : *selectedList) {
+        if (p.getId() == id) {
+            p.setHighlighted(!p.isHighlighted());
+            cout << "Highlight status toggled successfully "<< ".\n";
+            saveListings();
+            return;
         }
+    }
 
-        saveListings();
-        cout << "Highlight status toggled successfully.\n";
-    }
-    else {
-        cout << "Property not found in approved listings.\n";
-    }
+    cout << "Property not found in the selected list.\n";
 }
-
 
 void showAllProperties() {
     cout << fixed << setprecision(2);
 
-   
-    int choice1;
-    cout << "Choose which listings to display:\n";
-    cout << "1. Show All Listings\n";
-    cout << "2. Show Approved Listings\n";
-    cout << "3. Back\n";
-    cout << "Enter your choice: ";
-    cin >> choice1;
-
-  
-    map<int, Property>* listingsToShow = nullptr;
+    vector<Property>* listingsToShow = nullptr;
 
     while (true) {
-        if (choice1 == 1) {
-            listingsToShow = &allListings;
+        int choice;
+        cout << "\nChoose which listings to display:\n";
+        cout << "1. Approved Listings\n";
+        cout << "2. Pending Listings\n";
+        cout << "3. Rejected Listings\n";
+        cout << "4. Show All Listings\n";  
+        cout << "5. Back\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        if (choice == 1) {
+            listingsToShow = &approvedProperties;
             break;
         }
-        else if (choice1 == 2) {
-            listingsToShow = &approvedListings;
+        else if (choice == 2) {
+            listingsToShow = &pendingProperties;
             break;
         }
-        else if (choice1 == 3) {
+        else if (choice == 3) {
+            listingsToShow = &rejectedProperties;
+            break;
+        }
+        else if (choice == 4) {
+           
+            vector<Property> combinedListings;
+            combinedListings.insert(combinedListings.end(), approvedProperties.begin(), approvedProperties.end());
+            combinedListings.insert(combinedListings.end(), pendingProperties.begin(), pendingProperties.end());
+            combinedListings.insert(combinedListings.end(), rejectedProperties.begin(), rejectedProperties.end());
+
+          
+            sort(combinedListings.begin(), combinedListings.end(), compareHighlighted);
+
+            
+            cout << "\n======================================================== Property Listings =======================================================\n";
+            cout << left
+                << setw(5) << "HL"
+                << setw(7) << "ID"
+                << setw(20) << "Title"
+                << setw(13) << "Type"
+                << setw(15) << "Location"
+                << setw(13) << "Price"
+                << setw(16) << "Owner"
+                << setw(10) << "Bedrooms"
+                << setw(12) << "Bathrooms"
+                << setw(10) << "Area"
+                << setw(15) << "Status" << endl;
+
+            cout << "----------------------------------------------------------------------------------------------------------------------------------\n";
+
+            for (Property& p : combinedListings) {
+                cout << setw(5) << (p.isHighlighted() ? "*" : "")
+                    << setw(7) << p.getId()
+                    << setw(20) << p.getTitle()
+                    << setw(13) << p.getType()
+                    << setw(15) << p.getLocation()
+                    << setw(13) << p.getPrice()
+                    << setw(16) << p.getOwnerName()
+                    << setw(10) << p.getBedrooms()
+                    << setw(12) << p.getBathrooms()
+                    << setw(10) << p.getArea()
+                    << setw(15) << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected"))
+                    << endl;
+            }
+
+            if (combinedListings.empty()) {
+                cout << "No properties listed yet.\n";
+            }
+            cout << "==================================================================================================================================\n";
+            return;
+        }
+        else if (choice == 5) {
             cout << "Returning to the main menu...\n";
             return;
         }
         else {
             cout << "Invalid choice. Please try again.\n";
-            cout << "Enter your choice: ";
-            cin >> choice1;
         }
     }
 
-     // convert map to vector
-    vector<Property> listingsVec;
-    for (const auto& pair : *listingsToShow) {
-        listingsVec.push_back(pair.second);
-    }
-    sort(listingsVec.begin(), listingsVec.end(), compareHighlighted);
+   
+    sort(listingsToShow->begin(), listingsToShow->end(), compareHighlighted);
 
-    
-    cout << "\n============================ Property Listings ============================\n";
+    cout << "\n======================================================== Property Listings =======================================================\n";
     cout << left
         << setw(5) << "HL"
         << setw(7) << "ID"
@@ -477,9 +600,9 @@ void showAllProperties() {
         << setw(10) << "Area"
         << setw(15) << "Status" << endl;
 
-    cout << "-------------------------------------------------------------------------------\n";
+    cout << "----------------------------------------------------------------------------------------------------------------------------------\n";
 
-    for (Property& p : listingsVec) {
+    for (Property& p : *listingsToShow) {
         cout << setw(5) << (p.isHighlighted() ? "*" : "")
             << setw(7) << p.getId()
             << setw(20) << p.getTitle()
@@ -494,10 +617,11 @@ void showAllProperties() {
             << endl;
     }
 
-    if (listingsVec.empty()) {
+    if (listingsToShow->empty()) {
         cout << "No properties listed yet.\n";
     }
-    cout << "================================================================================\n";
+
+    cout << "==================================================================================================================================\n";
 }
 
 
