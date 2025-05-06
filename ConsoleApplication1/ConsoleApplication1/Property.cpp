@@ -4,13 +4,25 @@
 
 using namespace std;
 
-Property::Property() : price(0), area(0), bedrooms(0), bathrooms(0), status(Pending), highlighted(false) {}
+Property::Property() :
+    id(0),
+    title(""),
+    type(""),
+    location(""),
+    price(0),
+    ownerName(""),
+    userId(""),
+    bedrooms(0),
+    bathrooms(0),
+    area(0),
+    status(Pending),
+    highlighted(false) {
+}
 
-Property::Property(const int id, const string& userId, const string& title, double price,
-    const string& location, const string& owner, double area,
-    int bedrooms, int bathrooms, PropertyStatus status, bool highlighted)
-    : id(id), userId(userId), title(title), price(price), location(location), ownerName(owner),
-    area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status), highlighted(highlighted) {
+Property::Property(const int id, const string& title, const string& type, const string& location, double price, const string& owner,const string& userId,
+    int bedrooms, int bathrooms, double area, PropertyStatus status, bool highlighted)
+    : id(id), title(title) , type(type), location(location), price(price),ownerName(owner), userId(userId),
+     bedrooms(bedrooms), bathrooms(bathrooms), area(area), status(status), highlighted(highlighted) {
 }
 
 int Property::getId() const { return id; }
