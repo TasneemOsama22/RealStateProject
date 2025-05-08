@@ -10,10 +10,12 @@
 #include <sstream>
 #include <algorithm>
 using namespace std;
+Admin::Admin() {}
 Admin::Admin(string Id, string password) {
     this->Id = Id;
     this->Password = password;
 }
+
 
 Admin::Admin(const string Username, const string Email, const string Id, const string Pass) {
     this->Username = Username;
@@ -440,14 +442,14 @@ void Admin::ViewUserInfo(unordered_map<string, User>& Users) {
     }
 }
 
-bool Admin::checkisadmin(string& username, string& password, unordered_map<string, string>& Admins) {
+bool Admin::checkisadmin(string& username, string& password, unordered_map<string, Admin>& Admins) {
 
     auto adminsdata = Admins.find(password);
     return adminsdata != Admins.end() && adminsdata->second == username;
 
 }
 
-void Admin::AddnewAdmin(unordered_map<string, string>& Admins,
+void Admin::AddnewAdmin(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
     vector<Property>& ApprovedAds) {
@@ -463,7 +465,7 @@ void Admin::AddnewAdmin(unordered_map<string, string>& Admins,
     cout << "New admin added successfuly." << endl;
 }
 
-void Admin::RemoveAdmin(unordered_map<string, string>& Admins,
+void Admin::RemoveAdmin(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
     vector<Property>& ApprovedAds,
@@ -485,7 +487,7 @@ void Admin::RemoveAdmin(unordered_map<string, string>& Admins,
     }
 }
 
-void Admin::showAdminDashboard(unordered_map<string, string>& Admins,
+void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
     vector<Property>& ApprovedAds,

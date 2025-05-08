@@ -18,6 +18,7 @@ private:
 
 
 public:
+    Admin();
     Admin(const string Id, const string Pass);
     Admin(const string Username, const string Email, const string Id, const string Pass);
     //setter
@@ -62,12 +63,12 @@ public:
     //HabibaKhaled
     bool checkisadmin(string& username, string& password, unordered_map<string, string>& Admins);
 
-    void AddnewAdmin(unordered_map<string, string>& Admins,
+    void AddnewAdmin(unordered_map<string, Admin>& Admins,
         unordered_map<string, User>& Users,
         vector<Property>& PendingAds,
         vector<Property>& ApprovedAds);
 
-    void RemoveAdmin(unordered_map<string, string>& Admins,
+    void RemoveAdmin(unordered_map<string, Admin>& Admins,
         unordered_map<string, User>& Users,
         vector<Property>& PendingAds,
         vector<Property>& ApprovedAds,
@@ -75,7 +76,7 @@ public:
         vector<string>types,
         vector<string>locations);
 
-    void showAdminDashboard(unordered_map<string, string>& Admins,
+    void showAdminDashboard(unordered_map<string, Admin>& Admins,
         unordered_map<string, User>& Users,
         vector<Property>& PendingAds,
         vector<Property>& ApprovedAds,
