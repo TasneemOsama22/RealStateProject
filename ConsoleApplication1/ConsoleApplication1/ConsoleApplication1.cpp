@@ -44,7 +44,7 @@ void CompareProperties(const vector<Property>& properties) {
         return;
     }
 
-    unordered_map<string, Property> propertyMap; //make vector property into map with id as key to speed up the search
+    unordered_map<int, Property> propertyMap; //make vector property into map with id as key to speed up the search
     for (const auto& prop : properties) {
         propertyMap[prop.getId()] = prop;
     }
@@ -52,32 +52,52 @@ void CompareProperties(const vector<Property>& properties) {
     vector<Property> selectedProperties; //take the properties user enters
     cout << "Enter up to 4 properties id or type done to finish\n\n";
     for (int i = 0; i < 4; i++) {
-        string id;
+        string input;
         cout << "Enter id for property #" << i + 1 << ": ";
-        cin >> id;
+        cin >> input;
 
-        if (id == "done") {
+        if (input == "done") {
             break;
         }
-        else {
+        try {
+            int id = stoi(input);
             auto it = propertyMap.find(id);
             if (it != propertyMap.end()) {
-                selectedProperties.push_back(it->second); // Add the found property to the vector
+
+                // prevent adding the same property twice
+                bool alreadyAdded = false;
+                for (const auto& p : selectedProperties) {
+                    if (p.getId() == id) {
+                        alreadyAdded = true;
+                        break;
+                    }
+                }
+                if (alreadyAdded) {
+                    cout << "This property is already selected. Please enter a different ID.\n";
+                    i--;
+                }
+                else {
+                    selectedProperties.push_back(it->second);
+                }
             }
-            else { //no matching id found
-                cout << "property with ID  " << id << "  not found.Please try again.\n";
-                i--; // Repeat this one again
+            else {
+                cout << "Property with ID " << id << " not found. Please try again.\n";
+                i--; //do the iteration again
             }
         }
+        catch (invalid_argument&) {
+            cout << "Invalid input. Please enter a valid numeric ID or 'done'.\n";
+            i--;
+        }
     }
-
+    //formatting a table for view
     cout << "\n=== COMPARISON RESULTS (" << selectedProperties.size() << " properties) ===\n";
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
     cout << "| " << left << setw(8) << "ID" << " | " << setw(24) << "Property Name"
         << " | " << setw(12) << "Location" << " | " << setw(12) << "Price"
         << " | " << setw(15) << "Owner" << "|\n";
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
-
+    //showing selected props info
     for (const auto& prop : selectedProperties) {
         cout << "| " << setw(8) << prop.getId()
             << " | " << setw(24) << (prop.getTitle().substr(0, 23) + (prop.getTitle().length() > 23 ? "..." : ""))
@@ -86,7 +106,7 @@ void CompareProperties(const vector<Property>& properties) {
             << " | " << setw(15) << prop.getOwnerUsername() << "|\n";
     }
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
-
+    //the props price range
     if (!selectedProperties.empty()) {
         double minPrice = selectedProperties[0].getPrice();
         double maxPrice = minPrice;
@@ -94,7 +114,7 @@ void CompareProperties(const vector<Property>& properties) {
             if (prop.getPrice() < minPrice) minPrice = prop.getPrice();
             if (prop.getPrice() > maxPrice) maxPrice = prop.getPrice();
         }
-        cout << "\n  Price range: MIN " << minPrice << " -  MAX" << maxPrice
+        cout << "\n  Price range: MIN " << minPrice << " -  MAX " << maxPrice
             << " (Difference: " << (maxPrice - minPrice) << ")\n";
     }
 }
