@@ -12,5 +12,5 @@ public:
         std::string& accountType);
 
 private:
-    string getMaskedPassword();  
+    string getMaskedPassword();
 };
