@@ -8,8 +8,8 @@
 
 using namespace std;
 
-bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap,
-    string& id, string& name, string& email, string& password, string& type) {
+bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
+    string name, email, password, type, id;
     cout << "Enter your name: ";
     getline(cin, name);
 
