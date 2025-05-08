@@ -1,8 +1,11 @@
 #include "User.h"
+#include "Property.h"
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <queue>
 #include <sstream>
+#include <fstream>
 #include <vector>
 using namespace std;
 
@@ -72,28 +75,107 @@ void User::setWarningCount(int value) {
 }
 
 // Getters
-bool User::getIsBanned() {
+bool User::getIsBanned()const {
     return isBanned;
 }
 
-int User::getblockDaysRemaining() {
+int User::getblockDaysRemaining()const {
     return blockDaysRemaining;
 }
 
-bool User::getIsBlocked() {
+bool User::getIsBlocked()const {
     return IsBlocked;
 }
 
-bool User::getCanPost() {
+bool User::getCanPost()const {
     return CanPost;
 }
 
-int User::getWarningCount() {
+int User::getWarningCount()const {
     return WarningCount;
 }
 string User::getUsername()const { return username; }
 string User::getEmail()const { return email; }
 string User::getPassword()const { return password; }
+string User::getId()const { return userId; }
+vector<Property>& User::getProperties() {
+    return this->UserProperty;
+}
+
+//store and load property for each user
+#include <fstream>
+#include <iostream>
+#include "User.h"       // Assumes User has getProperties() or similar
+#include "Property.h"
+
+using namespace std;
+
+void User:: savePropertyForUser(unordered_map<string, User> userMap, string userId) {
+    ofstream outFile("accounts.txt", ios::app);
+    if (!outFile.is_open()) {
+        cout << "Error opening file for saving properties.\n";
+        return;
+    }
+
+    auto it = userMap.find(userId);
+    if (it == userMap.end()) {
+        cout << "User not found.\n";
+        return;
+    }
+
+    const vector<Property>& properties = it->second.getProperties(); 
+    for (const Property& prop : properties) {
+        outFile << "PROPERTY " << userId << " "
+            << prop.getId() << " "
+            << prop.getTitle() << " "
+            << prop.getType() << " "
+            << prop.getPrice() << " "
+            << prop.getLocation() << " "
+            << prop.getOwnerName() << " "
+            << prop.getArea() << " "
+            << prop.getBedrooms() << " "
+            << prop.getBathrooms() << " "
+            << prop.getStatus() << " "
+            << prop.isHighlighted() << " "
+            << prop.getIsSold() << "\n";
+    }
+
+    outFile.close();
+}
+
+unordered_map<string, vector<Property>>User:: loadPropertyforUser() {
+    unordered_map<string, vector<Property>> userProperties;
+    ifstream inFile("accounts.txt");
+    if (!inFile.is_open()) {
+        cout << "Error opening file for loading properties.\n";
+        return userProperties;
+    }
+
+    string line;
+    while (getline(inFile, line)) {
+        if (line.rfind("PROPERTY ", 0) == 0) {
+            istringstream iss(line);
+            string tag, userId, title, type, location, owner;
+            int id, bedrooms, bathrooms, status;
+            double price, area;
+            bool highlighted, isSold;
+
+            iss >> tag >> userId >> id >> title >> type >> price >> location
+                >> owner >> area >> bedrooms >> bathrooms >> status >> highlighted >> isSold;
+
+            Property p(id, userId, title, price, location, owner, area, bedrooms, bathrooms, static_cast<PropertyStatus>(status), highlighted);
+            p.setIsSold(isSold);
+
+            userProperties[userId].push_back(p);
+        }
+    }
+
+    inFile.close();
+    return userProperties;
+}
+
+
+
 
 User::~User() = default;
 
