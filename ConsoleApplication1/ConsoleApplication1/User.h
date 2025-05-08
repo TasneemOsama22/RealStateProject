@@ -2,7 +2,9 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "Property.h"
+
 using namespace std;
 
 class User {
@@ -40,13 +42,20 @@ public:
     void setWarningCount(int value);
 
     // getters
-    bool getIsBanned();
-    int getblockDaysRemaining();
-    bool getIsBlocked();
-    bool getCanPost();
-    int getWarningCount();
+    bool getIsBanned()const;
+    int getblockDaysRemaining()const;
+    bool getIsBlocked()const;
+    bool getCanPost()const;
+    int getWarningCount()const;
     string getUsername()const;
     string getEmail()const;
     string getPassword()const;
+    string getId()const;
+    vector<Property>& getProperties();
+
+    //store and load property for each user
+    void savePropertyForUser(unordered_map<string, User> userMap, string userId);
+    unordered_map<string, vector<Property>> loadPropertyforUser();
+    
 };
 
