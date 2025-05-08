@@ -1,4 +1,4 @@
-﻿#include "Register.h"
+#include "Register.h"
 #include "User.h"
 #include "Admin.h"
 #include <iostream>
@@ -8,9 +8,8 @@
 
 using namespace std;
 
-void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
-    string name, email, password;
-
+bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap,
+    string& id, string& name, string& email, string& password, string& type) {
     cout << "Enter your name: ";
     getline(cin, name);
 
@@ -22,27 +21,17 @@ void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<
     }
 
     // Check if email already exists
-    ifstream inFile("accounts.txt");
-    string line;
-    bool emailExists = false;
-    while (getline(inFile, line)) {
-        stringstream ss(line);
-        string tempID, tempName, tempEmail, tempPassword, tempType;
-        getline(ss, tempID, ',');
-        getline(ss, tempName, ',');
-        getline(ss, tempEmail, ',');
-        getline(ss, tempPassword, ',');
-        getline(ss, tempType, ',');
-        if (email == tempEmail) {
-            emailExists = true;
-            break;
+    for (const auto& pair : userMap) {
+        if (pair.second.getEmail() == email) {
+            cout << "An account with this email already exists.\n";
+            return false;
         }
     }
-    inFile.close();
-
-    if (emailExists) {
-        cout << "An account with this email already exists.\n";
-        return;
+    for (const auto& pair : adminMap) {
+        if (pair.second.getEmail() == email) {
+            cout << "An account with this email already exists.\n";
+            return false;
+        }
     }
 
     cout << "Enter your password: ";
@@ -52,33 +41,19 @@ void Register::registerUser(unordered_map<string, User>& userMap, unordered_map<
         getline(cin, password);
     }
 
-    string type = detectType();
-    string uniqueID = generateUniqueID(type);
+    type = detectType();
+    id = generateUniqueID(type);
 
-    // Create appropriate object and store in map
     if (type == "user") {
-        User newUser(uniqueID, name, email, password);
-        userMap[uniqueID] = newUser;
+        User newUser(id, name, email, password);
+        userMap[id] = newUser;
     }
     else {
-        Admin newAdmin(uniqueID, name, email, password);
-        adminMap[uniqueID] = newAdmin;
+        Admin newAdmin(id, name, email, password);
+        adminMap[id] = newAdmin;
     }
 
-    // Append new account to file 
-    ofstream outFile("accounts.txt", ios::app);
-    if (!outFile.is_open()) {
-        cout << "Error opening file for saving accounts.\n";
-        return;
-    }
-
-
-    outFile << uniqueID << "," << name << "," << email << "," << password << "," << type
-        << ",0,0,0" << endl;
-
-    outFile.close();
-
-    cout << "Account registered successfully as a " << type << "! Your ID is " << uniqueID << ".\n";
+    return true;
 }
 
 bool Register::isEmailValid(const string& email) {
@@ -129,3 +104,40 @@ string Register::generateUniqueID(const string& type) {
 
     return (type == "user" ? "USR" : "ADM") + to_string(maxID);
 }
+
+void Register::loadAccounts(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
+    ifstream inFile("accounts.txt");
+    string line;
+    while (getline(inFile, line)) {
+        stringstream ss(line);
+        string id, name, email, password, type;
+        getline(ss, id, ',');
+        getline(ss, name, ',');
+        getline(ss, email, ',');
+        getline(ss, password, ',');
+        getline(ss, type, ',');
+
+        if (type == "user") {
+            userMap[id] = User(id, name, email, password);
+        }
+        else if (type == "admin") {
+            adminMap[id] = Admin(id, name, email, password);
+        }
+    }
+    inFile.close();
+}
+
+void Register::storeAccount(const string& id, const string& name, const string& email, const string& password, const string& type) {
+    ofstream outFile("accounts.txt", ios::app);
+    if (!outFile.is_open()) {
+        cout << "Error opening file for saving accounts.\n";
+        return;
+    }
+
+    // Add default values for loginAttempts, isBlocked, isBanned
+    outFile << id << "," << name << "," << email << "," << password << "," << type
+        << ",0,0,0" << endl;
+
+    outFile.close();
+}
+
