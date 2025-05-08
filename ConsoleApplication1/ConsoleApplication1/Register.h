@@ -4,8 +4,7 @@
 using namespace std;
 class Register {
 public:
-    bool registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap,
-        string& id, string& name, string& email, string& password, string& type);
+    bool registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap);
     void loadAccounts(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap);
     void storeAccount(const string& id, const string& name, const string& email, const string& password, const string& type);
 
