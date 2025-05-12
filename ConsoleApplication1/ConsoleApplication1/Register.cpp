@@ -2,38 +2,44 @@
 #include "User.h"
 #include "Admin.h"
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <unordered_map>
 #include <regex>
 
 using namespace std;
 
 bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
     string name, email, password, type, id;
+
+    type = detectType();
+
     cout << "Enter your name: ";
     getline(cin, name);
 
     cout << "Enter your email: ";
     getline(cin, email);
+    transform(email.begin(), email.end(), email.begin(), ::tolower);
+
     while (!isEmailValid(email)) {
         cout << "Invalid email. Try again: ";
         getline(cin, email);
     }
+    
+    bool emailExists = any_of(userMap.begin(), userMap.end(),
+        [&email](const auto& pair) { return pair.second.getEmail() == email; });
 
-    // Check if email already exists
-    for (const auto& pair : userMap) {
-        if (pair.second.getEmail() == email) {
-            cout << "An account with this email already exists.\n";
-            return false;
-        }
-    }
-    for (const auto& pair : adminMap) {
-        if (pair.second.getEmail() == email) {
-            cout << "An account with this email already exists.\n";
-            return false;
-        }
+    if (emailExists) {
+        cout << "User email exists!\n";
+        return false;
     }
 
+    emailExists = any_of(adminMap.begin(), adminMap.end(),
+        [&email](const auto& pair) { return pair.second.getEmail() == email; });
+
+    if (emailExists) {
+        cout << "Admin email exists!\n";
+        return false;
+    }
+    
     cout << "Enter your password: ";
     getline(cin, password);
     while (!isPasswordStrong(password)) {
@@ -41,23 +47,21 @@ bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<
         getline(cin, password);
     }
 
-    type = detectType();
-    id = generateUniqueID(type);
+    id = generateUniqueID(userMap, adminMap, type);
 
     if (type == "user") {
-        User newUser(id, name, email, password);
-        userMap[id] = newUser;
+        userMap[id] = User(id, name, email, password);
     }
     else {
-        Admin newAdmin(id, name, email, password);
-        adminMap[id] = newAdmin;
+        adminMap[id] = Admin(id, name, email, password);
     }
 
+    cout << "Account successfully registered.\n";
     return true;
 }
 
 bool Register::isEmailValid(const string& email) {
-    const regex pattern(R"((\w+)(\.{0,1})(\w*)@(\w+)\.(\w+))");
+    const regex pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
     return regex_match(email, pattern);
 }
 
@@ -77,67 +81,34 @@ string Register::detectType() {
     return (code == 1) ? "admin" : "user";
 }
 
-string Register::generateUniqueID(const string& type) {
+string Register::generateUniqueID(
+    const unordered_map<string, User>& userMap,
+    const unordered_map<string, Admin>& adminMap,
+    const string& type
+) {
     int maxID = (type == "user") ? 1000 : 2000;
 
-    ifstream inFile("accounts.txt");
-    if (inFile.is_open()) {
-        string line;
-        while (getline(inFile, line)) {
-            stringstream ss(line);
-            string id, name, email, password, userType;
-            getline(ss, id, ',');
-            getline(ss, name, ',');
-            getline(ss, email, ',');
-            getline(ss, password, ',');
-            getline(ss, userType, ',');
-
-            if ((type == "user" && id.substr(0, 3) == "USR") ||
-                (type == "admin" && id.substr(0, 3) == "ADM")) {
+    if (type == "user") {
+        for (const auto& pair : userMap) {
+            const string& id = pair.first;
+            if (id.substr(0, 3) == "USR") {
                 int num = stoi(id.substr(3));
                 if (num >= maxID)
                     maxID = num + 1;
             }
         }
-        inFile.close();
+    }
+    else {
+        for (const auto& pair : adminMap) {
+            const string& id = pair.first;
+            if (id.substr(0, 3) == "ADM") {
+                int num = stoi(id.substr(3));
+                if (num >= maxID)
+                    maxID = num + 1;
+            }
+        }
     }
 
     return (type == "user" ? "USR" : "ADM") + to_string(maxID);
-}
-
-void Register::loadAccounts(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
-    ifstream inFile("accounts.txt");
-    string line;
-    while (getline(inFile, line)) {
-        stringstream ss(line);
-        string id, name, email, password, type;
-        getline(ss, id, ',');
-        getline(ss, name, ',');
-        getline(ss, email, ',');
-        getline(ss, password, ',');
-        getline(ss, type, ',');
-
-        if (type == "user") {
-            userMap[id] = User(id, name, email, password);
-        }
-        else if (type == "admin") {
-            adminMap[id] = Admin(id, name, email, password);
-        }
-    }
-    inFile.close();
-}
-
-void Register::storeAccount(const string& id, const string& name, const string& email, const string& password, const string& type) {
-    ofstream outFile("accounts.txt", ios::app);
-    if (!outFile.is_open()) {
-        cout << "Error opening file for saving accounts.\n";
-        return;
-    }
-
-    // Add default values for loginAttempts, isBlocked, isBanned
-    outFile << id << "," << name << "," << email << "," << password << "," << type
-        << ",0,0,0" << endl;
-
-    outFile.close();
 }
 
