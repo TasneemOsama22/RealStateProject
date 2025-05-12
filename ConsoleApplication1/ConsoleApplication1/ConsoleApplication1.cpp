@@ -1,54 +1,77 @@
 #include <iostream>
-#include "Register.h"
-#include "Login.h"
-#include "User.h"
-#include "Admin.h"
 #include <unordered_map>
 #include <vector>
-
+#include <fstream>
+#include <sstream>
+#include "User.h"
+#include "Admin.h"
+#include "Register.h"
+#include "Login.h"
+#include "Property.h"
+#include "Files.h"
 using namespace std;
-
 int main() {
     unordered_map<string, User> userMap;
     unordered_map<string, Admin> adminMap;
+    Files f;
+    vector<Property> approvedAds, pendingAds, rejectedAds;
+    vector<string> types = {
+        "Apartment", "Villa", "Chalet", "Studio",
+        "Duplex", "Townhouse", "Farmhouse"
+    };
+    vector<string> locations = {
+        "New Cairo", "6th October", "North Coast",
+        "Zayed City", "Maadi", "Heliopolis", "Nasr City"
+    };
 
     Register reg;
-    Login log;
-    int choice;
+    Login login;
+    User user;
+    ifstream inFile("accounts.txt");
+    if (inFile.is_open()) {
+        f.loadAccountsFromFile(userMap, adminMap, inFile);
+        inFile.close();
+    }
 
-    do {
-        cout << "\n1. Register\n2. Login\n0. Exit\nChoose option: ";
-        cin >> choice;
-        cin.ignore(); // Clear newline from input buffer
+    f.loadPropertiesFromFile(pendingAds, approvedAds, rejectedAds, "properties.txt");
 
-        switch (choice) {
-        case 1:
-            reg.registerUser(userMap, adminMap);
-            break;
-        case 2: {
-            string loggedInId;
-            string accountType;
+    string loggedInId, accountType;
 
-            bool success = log.loginUser(userMap, adminMap, loggedInId, accountType);
-            if (success) {
-                if (accountType == "admin") {
-                    cout << "Admin logged in with ID: " << loggedInId << endl;
-                    // TODO: Call admin menu or features here
+    while (true) {
+        cout << "\n=== Main Menu ===\n";
+        cout << "1. Register\n2. Login\n3. Exit\nChoose: ";
+        string input;
+        getline(cin, input);
+
+        if (input == "1") {
+            reg.registerUser(userMap, adminMap); 
+        }
+        else if (input == "2") {
+            if (login.loginUser(userMap, adminMap, loggedInId, accountType)) {
+                if (accountType == "user") {
+                    user.userDashboard(userMap, pendingAds, approvedAds, loggedInId); 
                 }
-                else {
-                    cout << "User logged in with ID: " << loggedInId << endl;
-                    // TODO: Call user menu or features here
+                else if (accountType == "admin") {
+                    Admin currentAdmin;
+                    currentAdmin.showAdminDashboard(adminMap, userMap, pendingAds, approvedAds, rejectedAds, types, locations); 
                 }
             }
+        }
+        else if (input == "3") {
             break;
         }
-        case 0:
-            cout << "Goodbye!\n";
-            break;
-        default:
-            cout << "Invalid choice!\n";
+        else {
+            cout << "Invalid input. Please try again.\n";
         }
-    } while (choice != 0);
+    }
+
+    ofstream outFile("accounts.txt");
+    if (outFile.is_open()) {
+        f.storeAccountsToFile(userMap, adminMap, outFile);
+        outFile.close();
+    }
+
+    f.savePropertiesToFile(pendingAds, approvedAds, rejectedAds, "properties.txt");
 
     return 0;
 }
