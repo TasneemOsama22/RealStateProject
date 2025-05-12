@@ -2,6 +2,7 @@
 #include "User.h"
 #include "Admin.h"
 #include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <conio.h>
@@ -9,49 +10,70 @@
 
 using namespace std;
 
-bool Login::loginUser(unordered_map<string, User>& userMap,
-    unordered_map<string, Admin>& adminMap,
-    string& loggedInId,
-    string& accountType) {
-    string email, password;
-
+bool Login::loginUser(unordered_map<string, User>& userMap,unordered_map<string, Admin>& adminMap, string& loggedInId, string& accountType) {
     cout << "Enter email: ";
-    getline(cin, email);
+    string loginEmail;
+    getline(cin, loginEmail);
+    transform(loginEmail.begin(), loginEmail.end(), loginEmail.begin(), ::tolower);
 
     cout << "Enter password: ";
-    password = getMaskedPassword();
+    string loginPassword;
+    loginPassword = getMaskedPassword();
 
-    // Check in userMap
-    for (const auto& pair : userMap) {
-        const User& user = pair.second;
-        if (user.getEmail() == email && user.getPassword() == password) {
+    for (auto& pair : userMap) {
+        User& user = pair.second;  
+
+        if (user.getEmail() == loginEmail) {
+            if (user.getPassword() != loginPassword) {
+                cout << "Incorrect password.\n";
+                return false;
+            }
+
             if (user.getIsBanned()) {
-                cout << "Your account has been permanently banned. Access denied.\n";
+                cout << "Your account is permanently banned. Contact support.\n";
                 return false;
             }
+
             if (user.getIsBlocked()) {
-                cout << "Your account is currently blocked for " << user.getblockDaysRemaining() << " more day(s).\n";
-                return false;
+                int daysRemaining = user.getblockDaysRemaining();
+                if (daysRemaining > 0) {
+                    cout << "Your account is currently blocked for " << daysRemaining << " more day(s).\n";
+                    // Reduce block days by 1
+                    user.setblockDaysRemaining(daysRemaining - 1);
+                    if (daysRemaining - 1 <= 0) {
+                        user.setIsBlocked(false);
+                        cout << "Block lifted. You can now access your account.\n";
+                        return true;
+                    }
+                    return false;
+                }
             }
+
+            cout << "Login successful: " << user.getUsername() << "\n";
             loggedInId = user.getId();
             accountType = "user";
-            cout << "\nLogin successful!\n";
-            cout << "Welcome, " << user.getUsername() << " (user)\n";
             return true;
         }
     }
-    for (const auto& pair : adminMap) {
-        const Admin& admin = pair.second;
-        if (admin.getEmail() == email && admin.getPassword() == password) {
-           
+
+    // Search in admin map
+    for (auto& pair : adminMap) {
+        Admin& admin = pair.second;  
+
+        if (admin.getEmail() == loginEmail) {
+            if (admin.getPassword() != loginPassword) {
+                cout << "Incorrect password.\n";
+                return false;
+            }
+
+            cout << "Login successful: " << admin.getUsername() << "\n";
             loggedInId = admin.getId();
             accountType = "admin";
-            cout << "\nLogin successful!\n";
-            cout << "Welcome, " << admin.getUsername() << " (admin)\n";
             return true;
         }
     }
-    cout << "Login failed. Incorrect email or password.\n";
+
+    cout << "No account found with this email.\n";
     return false;
 }
 
@@ -59,14 +81,13 @@ bool Login::loginUser(unordered_map<string, User>& userMap,
 string Login::getMaskedPassword() {
     string password;
     char ch;
-    while ((ch = _getch()) != '\r') {  
-        if (ch == '\b') { 
+    while ((ch = _getch()) != '\r') {
+        if (ch == '\b') {
             if (!password.empty()) {
                 password.pop_back();
                 cout << "\b \b";
             }
-        }
-        else {
+        } else {
             password += ch;
             cout << '*';
         }
