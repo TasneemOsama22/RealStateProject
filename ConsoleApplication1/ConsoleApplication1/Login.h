@@ -6,10 +6,7 @@
 
 class Login {
 public:
-    bool loginUser(std::unordered_map<std::string, User>& userMap,
-        std::unordered_map<std::string, Admin>& adminMap,
-        std::string& loggedInId,
-        std::string& accountType);
+    bool loginUser(unordered_map<string, User>& userMap,unordered_map<string, Admin>& adminMap, string& loggedInId, string& accountType);
 
 private:
     string getMaskedPassword();
