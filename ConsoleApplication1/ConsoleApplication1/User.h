@@ -12,10 +12,10 @@ private:
     bool isBanned = false;
     bool CanPost = true;
     bool IsBlocked = false;
-    int blockDaysRemaining = 0;
     int WarningCount = 0;
 
 public:
+    int blockDaysRemaining = 0;
     string userId;
     string username;
     string password;
@@ -53,9 +53,28 @@ public:
     string getId()const;
     vector<Property>& getProperties();
 
-    //store and load property for each user
-    void savePropertyForUser(unordered_map<string, User> userMap, string userId);
-    unordered_map<string, vector<Property>> loadPropertyforUser();
+    // user functionalites
+    void CompareProperties(const vector<Property>& properties);
+    void sortByPrice(vector<Property>& properties);
+    void sortByLocation(vector<Property>& properties);
+    vector<Property> searchProperties(const vector<Property>& properties, const string& location, double lowerPrice, double higherPrice, const string& type);
+    void sortByType(vector<Property>& properties);
+    void sortByArea(vector<Property>& properties);
+    void sortByNumOfBedRooms(vector<Property>& properties);
+    vector<Property> binarySearchByLocation(vector<Property>& properties, const string& location);
+    vector<Property> binarySearchByPrice(vector<Property>& properties, double targetPrice);
+    vector<Property> binarySearchByType(vector<Property>& properties, const string& targetType);
+    vector<Property> binarySearchByArea(vector<Property>& properties, double area);
+    vector<Property> binarySearchByNumOfBedRooms(vector<Property>& properties, int numOfBedRooms);
+    vector<Property> addProperty(unordered_map<string, User>& users,
+        const string& currentUserId,
+        vector<Property>& pendingProp);
+    string checkPropertyStatus(const Property& property);
+    void viewUserProperties(unordered_map<string, User>& users,
+        const string& currentUserId, const string& status);
+    void buyProperty(vector<Property>& properties, const string& buyerId);
+    void userDashboard(unordered_map<string, User>& userMap, vector<Property>& pendingAds, vector<Property>& approvedAds, const string& loggedInId);
+
     
 };
 
