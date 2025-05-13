@@ -66,6 +66,7 @@ public:
     vector<Property> binarySearchByType(vector<Property>& properties, const string& targetType);
     vector<Property> binarySearchByArea(vector<Property>& properties, double area);
     vector<Property> binarySearchByNumOfBedRooms(vector<Property>& properties, int numOfBedRooms);
+    void displayResult(vector<Property>&approved);
     vector<Property> addProperty(unordered_map<string, User>& users,
         const string& currentUserId,
         vector<Property>& pendingProp);
@@ -75,6 +76,5 @@ public:
     void buyProperty(vector<Property>& properties, const string& buyerId);
     void userDashboard(unordered_map<string, User>& userMap, vector<Property>& pendingAds, vector<Property>& approvedAds, const string& loggedInId);
 
-    
-};
 
+};
