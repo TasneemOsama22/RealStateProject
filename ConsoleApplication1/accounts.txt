@@ -1,0 +1,1 @@
+USR1000,ayten,a@a.com,123456,user,0,0,0,0,
