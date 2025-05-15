@@ -1,84 +1,113 @@
 #include "Register.h"
 #include "User.h"
 #include "Admin.h"
+#include <iostream>
+#include <unordered_map>
 #include <regex>
-#include <algorithm>
 
-QString Register::registerUser(const QString& qName, const QString& qEmail, const QString& qPassword, const QString& qType,
-                               std::unordered_map<std::string, User>& userMap,
-                               std::unordered_map<std::string, Admin>& adminMap) {
+using namespace std;
 
-    std::string name = qName.toStdString();
-    std::string email = qEmail.toStdString();
-    std::string password = qPassword.toStdString();
-    std::string type = qType.toStdString();
+bool Register::registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap) {
+    string name, email, password, type, id;
 
-    std::transform(email.begin(), email.end(), email.begin(), ::tolower);
+    type = detectType();
 
-    if (!isEmailValid(email)) {
-        return "Invalid email format.";
+    cout << "Enter your name: ";
+    getline(cin, name);
+
+    cout << "Enter your email: ";
+    getline(cin, email);
+    transform(email.begin(), email.end(), email.begin(), ::tolower);
+
+    while (!isEmailValid(email)) {
+        cout << "Invalid email. Try again: ";
+        getline(cin, email);
     }
 
-    bool emailExists = std::any_of(userMap.begin(), userMap.end(),
-                                   [&email](const auto& pair) {
-                                       return pair.second.getEmail() == email;
-                                   });
+    bool emailExists = any_of(userMap.begin(), userMap.end(),
+        [&email](const auto& pair) { return pair.second.getEmail() == email; });
 
-    if (emailExists || std::any_of(adminMap.begin(), adminMap.end(),
-                                   [&email](const auto& pair) {
-                                       return pair.second.getEmail() == email;
-                                   })) {
-        return "Email already exists!";
+    if (emailExists) {
+        cout << "User email exists!\n";
+        return false;
     }
 
-    if (!isPasswordStrong(password)) {
-        return "Weak password. Must be at least 6 characters.";
+    emailExists = any_of(adminMap.begin(), adminMap.end(),
+        [&email](const auto& pair) { return pair.second.getEmail() == email; });
+
+    if (emailExists) {
+        cout << "Admin email exists!\n";
+        return false;
     }
 
-    std::string id = generateUniqueID(userMap, adminMap, type);
+    cout << "Enter your password: ";
+    getline(cin, password);
+    while (!isPasswordStrong(password)) {
+        cout << "Weak password. Must be at least 6 characters. Try again: ";
+        getline(cin, password);
+    }
+
+    id = generateUniqueID(userMap, adminMap, type);
 
     if (type == "user") {
         userMap[id] = User(id, name, email, password);
-    } else if (type == "admin") {
+    }
+    else {
         adminMap[id] = Admin(id, name, email, password);
-    } else {
-        return "Invalid account type.";
     }
 
-    return "Account successfully registered.";
+    cout << "Account successfully registered.\n";
+    return true;
 }
 
-bool Register::isEmailValid(const std::string& email) {
-    const std::regex pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
-    return std::regex_match(email, pattern);
+bool Register::isEmailValid(const string& email) {
+    const regex pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
+    return regex_match(email, pattern);
 }
 
-bool Register::isPasswordStrong(const std::string& password) {
+bool Register::isPasswordStrong(const string& password) {
     return password.length() >= 6;
 }
 
-std::string Register::generateUniqueID(const std::unordered_map<std::string, User>& userMap,
-                                       const std::unordered_map<std::string, Admin>& adminMap,
-                                       const std::string& type) {
+string Register::detectType() {
+    int code;
+    cout << "1.Admin\n2.User: ";
+    while (!(cin >> code) || (code != 1 && code != 2)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input. Enter 1 for Admin or 2 for User: ";
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    return (code == 1) ? "admin" : "user";
+}
+
+string Register::generateUniqueID(
+    const unordered_map<string, User>& userMap,
+    const unordered_map<string, Admin>& adminMap,
+    const string& type
+) {
     int maxID = (type == "user") ? 1000 : 2000;
 
     if (type == "user") {
         for (const auto& pair : userMap) {
-            const std::string& id = pair.first;
+            const string& id = pair.first;
             if (id.substr(0, 3) == "USR") {
-                int num = std::stoi(id.substr(3));
-                maxID = std::max(maxID, num + 1);
+                int num = stoi(id.substr(3));
+                if (num >= maxID)
+                    maxID = num + 1;
             }
         }
-        return "USR" + std::to_string(maxID);
-    } else {
-        for (const auto& pair : adminMap) {
-            const std::string& id = pair.first;
-            if (id.substr(0, 3) == "ADM") {
-                int num = std::stoi(id.substr(3));
-                maxID = std::max(maxID, num + 1);
-            }
-        }
-        return "ADM" + std::to_string(maxID);
     }
+    else {
+        for (const auto& pair : adminMap) {
+            const string& id = pair.first;
+            if (id.substr(0, 3) == "ADM") {
+                int num = stoi(id.substr(3));
+                if (num >= maxID)
+                    maxID = num + 1;
+            }
+        }
+    }
+
+    return (type == "user" ? "USR" : "ADM") + to_string(maxID);
 }
