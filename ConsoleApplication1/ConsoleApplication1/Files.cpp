@@ -36,7 +36,7 @@ void Files::loadAccountsFromFile(
                 >> area >> bedrooms >> bathrooms
                 >> status >> highlighted >> isSold;
 
-            Property p(id, userId, title, price, location, owner, area,type, bedrooms, bathrooms, static_cast<PropertyStatus>(status), highlighted);
+            Property p(id, userId, title, price, location, owner, area, type, bedrooms, bathrooms, static_cast<PropertyStatus>(status), highlighted);
             p.setIsSold(isSold);
 
             // Add property to corresponding user if user exists
@@ -176,12 +176,11 @@ void Files::savePropertiesToFile(const vector<Property>& pending,
                 << p.getLocation() << ","
                 << p.getOwnerName() << ","
                 << p.getArea() << ","
-                <<p.getTitle()<<","
                 << p.getBedrooms() << ","
                 << p.getBathrooms() << ","
                 << static_cast<int>(p.getStatus()) << ","
-                << p.isHighlighted() << ","
-                << p.getIsSold() << "\n";
+                << (p.isHighlighted() ? 1 : 0) << ","
+                << (p.getIsSold() ? 1 : 0) << "\n";
         }
         };
 
@@ -219,7 +218,6 @@ void Files::loadPropertiesFromFile(vector<Property>& pending,
         getline(ss, token, ','); p.setLocation(token);
         getline(ss, token, ','); p.setOwnerName(token);
         getline(ss, token, ','); p.setArea(stod(token));
-        getline(ss, token, ','); p.setType(token);
         getline(ss, token, ','); p.setBedrooms(stoi(token));
         getline(ss, token, ','); p.setBathrooms(stoi(token));
         getline(ss, token, ','); statusInt = stoi(token);
@@ -239,4 +237,3 @@ void Files::loadPropertiesFromFile(vector<Property>& pending,
 
     inFile.close();
 }
-
