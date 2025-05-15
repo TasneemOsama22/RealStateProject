@@ -44,16 +44,16 @@ int main() {
         getline(cin, input);
 
         if (input == "1") {
-            reg.registerUser(userMap, adminMap); 
+            reg.registerUser(userMap, adminMap);
         }
         else if (input == "2") {
             if (login.loginUser(userMap, adminMap, loggedInId, accountType)) {
                 if (accountType == "user") {
-                    user.userDashboard(userMap, pendingAds, approvedAds, loggedInId); 
+                    user.userDashboard(userMap, pendingAds, approvedAds, loggedInId);
                 }
                 else if (accountType == "admin") {
                     Admin currentAdmin;
-                    currentAdmin.showAdminDashboard(adminMap, userMap, pendingAds, approvedAds, rejectedAds, types, locations); 
+                    currentAdmin.showAdminDashboard(adminMap, userMap, pendingAds, approvedAds, rejectedAds, types, locations,loggedInId);
                 }
             }
         }
