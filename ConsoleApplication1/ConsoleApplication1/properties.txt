@@ -1,0 +1,10 @@
+1006,user106,Family Villa,Villa,28000,6th October,Sarah Green,380,4,3,0,1,0
+1008,user108,Student Studio,Studio,30000,Zayed City,Liam Davis,60,1,1,0,1,0
+1001,user101,Cozy Apartment,Apartment,85000,New Cairo,John Doe,120,2,1,0,0,0
+1010,user110,Private Villa,Villa,40000,Heliopolis,Noah Adams,550,6,4,0,0,0
+1003,user103,Beachfront Chalet,Chalet,15000,Heliopolis,Alice White,220,3,2,1,1,0
+1005,user105,Modern Duplex,Duplex,95000,New Cairo,Mike Brown,140,3,2,1,1,1
+1009,user109,Downtown Apartment,Apartment,11000,New Cairo,Olivia Clark,150,3,2,1,1,1
+1007,user107,Cozy Chalet,Chalet,13000,North Coast,Emma Wilson,200,2,2,1,0,0
+1002,user102,Luxury Villa,Villa,35000,Zayed City,Jane Smith,450,5,4,1,0,0
+1004,user104,Compact Farmhouse,Farmhouse,40000,Maadi,Bob Johnson,80,1,1,2,0,0
