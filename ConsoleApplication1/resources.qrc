@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/new/prefix1">
-        <file>images/8dff49985d0d8afa53751d9ba8907aed.png</file>
-        <file>images/3bf97c640b8732a64ab73b653f622582.jpg</file>
-        <file>images/activity-feed-xxl.png</file>
-    </qresource>
-</RCC>
