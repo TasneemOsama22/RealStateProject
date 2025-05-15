@@ -12,7 +12,7 @@ Property::Property()
 }
 
 Property::Property(const int id, const string& userId, const string& title, double price,
-    const string& location, const string& owner, double area,
+    const string& location, const string& owner, double area,string& type,
     int bedrooms, int bathrooms, PropertyStatus status, bool highlighted)
     : id(id), userId(userId), title(title), price(price), location(location),
     ownerName(owner), area(area), bedrooms(bedrooms), bathrooms(bathrooms),
@@ -20,7 +20,7 @@ Property::Property(const int id, const string& userId, const string& title, doub
 }
 
 Property::Property(const string& title, double price,
-    const string& location, const string& owner, double area,
+    const string& location, const string& owner, double area,string& type,
     int bedrooms, int bathrooms, PropertyStatus status)
     : id(0), title(title), price(price), location(location), ownerName(owner),
     area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status),
@@ -120,5 +120,4 @@ void Property::fromFileString(const string& line) {
         cout << "Error reading property from file: " << e.what() << endl;
     }
 }
-
 
