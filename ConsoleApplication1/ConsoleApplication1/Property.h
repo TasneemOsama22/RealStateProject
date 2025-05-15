@@ -28,11 +28,11 @@ private:
 public:
     Property();
     Property(const int id, const string& userId, const string& title, double price,
-        const string& location, const string& owner, double area,
+        const string& location, const string& owner, double area, string& type,
         int bedrooms, int bathrooms, PropertyStatus status, bool highlighted = false);
 
     Property(const string& title, double price,
-        const string& location, const string& owner, double area,
+        const string& location, const string& owner, double area,string& type,
         int bedrooms, int bathrooms, PropertyStatus status);
 
     // Getters
@@ -67,5 +67,5 @@ public:
 
     string toFileString() const;
     void fromFileString(const string& line);
-    
+
 };
