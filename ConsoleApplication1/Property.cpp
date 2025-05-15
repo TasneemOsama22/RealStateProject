@@ -12,16 +12,16 @@ Property::Property()
 }
 
 Property::Property(const int id, const string& userId, const string& title, double price,
-                   const string& location, const string& owner, double area,
-                   int bedrooms, int bathrooms, PropertyStatus status, bool highlighted)
+    const string& location, const string& owner, double area,string& type,
+    int bedrooms, int bathrooms, PropertyStatus status, bool highlighted)
     : id(id), userId(userId), title(title), price(price), location(location),
     ownerName(owner), area(area), bedrooms(bedrooms), bathrooms(bathrooms),
     status(status), highlighted(highlighted), isSold(false) {
 }
 
 Property::Property(const string& title, double price,
-                   const string& location, const string& owner, double area,
-                   int bedrooms, int bathrooms, PropertyStatus status)
+    const string& location, const string& owner, double area,string& type,
+    int bedrooms, int bathrooms, PropertyStatus status)
     : id(0), title(title), price(price), location(location), ownerName(owner),
     area(area), bedrooms(bedrooms), bathrooms(bathrooms), status(status),
     highlighted(false), isSold(false) {
@@ -60,22 +60,22 @@ void Property::setIsSold(bool sold) { isSold = sold; }
 string Property::toFileString() const {
     stringstream ss;
     ss << id << "|"
-       << title << "|"
-       << type << "|"
-       << location << "|"
-       << price << "|"
-       << ownerName << "|"
-       << userId << "|"
-       << bedrooms << "|"
-       << bathrooms << "|"
-       << area << "|";
+        << title << "|"
+        << type << "|"
+        << location << "|"
+        << price << "|"
+        << ownerName << "|"
+        << userId << "|"
+        << bedrooms << "|"
+        << bathrooms << "|"
+        << area << "|";
 
     if (status == Pending) ss << "Pending";
     else if (status == Approved) ss << "Approved";
     else ss << "Rejected";
 
     ss << "|" << (highlighted ? 1 : 0)
-       << "|" << (isSold ? 1 : 0);
+        << "|" << (isSold ? 1 : 0);
 
     return ss.str();
 }
@@ -120,5 +120,4 @@ void Property::fromFileString(const string& line) {
         cout << "Error reading property from file: " << e.what() << endl;
     }
 }
-
 
