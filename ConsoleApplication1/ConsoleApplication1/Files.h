@@ -14,4 +14,3 @@ public:
 	void loadPropertiesFromFile(vector<Property>& pending, vector<Property>& approved,
 		vector<Property>& rejected, const string& filename);
 };
-
