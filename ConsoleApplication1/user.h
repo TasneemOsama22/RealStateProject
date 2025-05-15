@@ -4,8 +4,6 @@
 #include <vector>
 #include <unordered_map>
 #include "Property.h"
-#include <QString>
-#include <QTextStream>
 
 using namespace std;
 
@@ -31,7 +29,6 @@ public:
     User();
     User(const string& id, const string& name, const string& email, const string& password);
     ~User();
-
     //Files
     string toFileString() const; //for the user files
     void fromFileString(const string& line);
@@ -39,7 +36,7 @@ public:
 
     // setters
     void setIsBanned(bool value);
-    void setblockDaysRemaining(int value);  // Ensure this setter is used
+    void setblockDaysRemaining(int value);
     void setIsBlocked(bool value);
     void setCanPost(bool value);
     void setWarningCount(int value);
@@ -55,7 +52,7 @@ public:
     string getPassword()const;
     string getId()const;
     vector<Property>& getProperties();
- friend QTextStream& operator<<(QTextStream& out, const User& user);
+
     // user functionalites
     void CompareProperties(const vector<Property>& properties);
     void sortByPrice(vector<Property>& properties);
@@ -69,13 +66,15 @@ public:
     vector<Property> binarySearchByType(vector<Property>& properties, const string& targetType);
     vector<Property> binarySearchByArea(vector<Property>& properties, double area);
     vector<Property> binarySearchByNumOfBedRooms(vector<Property>& properties, int numOfBedRooms);
+    void displayResult(vector<Property>& approved);
     vector<Property> addProperty(unordered_map<string, User>& users,
-                                 const string& currentUserId,
-                                 vector<Property>& pendingProp);
+        const string& currentUserId,
+        vector<Property>& pendingProp);
     string checkPropertyStatus(const Property& property);
     void viewUserProperties(unordered_map<string, User>& users,
-                            const string& currentUserId, const string& status);
+        const string& currentUserId, const string& status);
     void buyProperty(vector<Property>& properties, const string& buyerId);
     void userDashboard(unordered_map<string, User>& userMap, vector<Property>& pendingAds, vector<Property>& approvedAds, const string& loggedInId);
+    void manageUserProfile(unordered_map<string, User>& users, const string& userId);
 
 };
