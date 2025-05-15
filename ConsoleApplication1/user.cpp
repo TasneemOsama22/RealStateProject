@@ -3,7 +3,9 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <queue>
 #include <sstream>
+#include <fstream>
 #include <vector>
 #include <iomanip>
 #include <algorithm>
@@ -25,10 +27,10 @@ User::User(string userId, string pass) {
 
 string User::toFileString() const {
     return userId + "," + username + "," + email + "," + password + "," +
-           (isAdmin ? "1" : "0") + "," +
-           (isBanned ? "1" : "0") + "," +
-           (IsBlocked ? "1" : "0") + "," +
-           to_string(blockDaysRemaining);
+        (isAdmin ? "1" : "0") + "," +
+        (isBanned ? "1" : "0") + "," +
+        (IsBlocked ? "1" : "0") + "," +
+        to_string(blockDaysRemaining);
 }
 
 void User::fromFileString(const string& line) {
@@ -55,18 +57,18 @@ bool User::checkPassword(const string& p) const {
 }
 
 // Setters
-void User::setIsBanned(bool value) {isBanned = value;}
-void User::setblockDaysRemaining(int value) {blockDaysRemaining = value;}
-void User::setIsBlocked(bool value) {IsBlocked = value;}
-void User::setCanPost(bool value) {CanPost = value;}
-void User::setWarningCount(int value) {WarningCount = value;}
+void User::setIsBanned(bool value) { isBanned = value; }
+void User::setblockDaysRemaining(int value) { blockDaysRemaining = value; }
+void User::setIsBlocked(bool value) { IsBlocked = value; }
+void User::setCanPost(bool value) { CanPost = value; }
+void User::setWarningCount(int value) { WarningCount = value; }
 
 // Getters
-bool User::getIsBanned()const {return isBanned;}
-int User::getblockDaysRemaining()const {return blockDaysRemaining;}
-bool User::getIsBlocked()const {return IsBlocked;}
-bool User::getCanPost()const {return CanPost;}
-int User::getWarningCount()const {return WarningCount;}
+bool User::getIsBanned()const { return isBanned; }
+int User::getblockDaysRemaining()const { return blockDaysRemaining; }
+bool User::getIsBlocked()const { return IsBlocked; }
+bool User::getCanPost()const { return CanPost; }
+int User::getWarningCount()const { return WarningCount; }
 string User::getUsername()const { return username; }
 string User::getEmail()const { return email; }
 string User::getPassword()const { return password; }
@@ -75,109 +77,7 @@ vector<Property>& User::getProperties() {
     return UserProperty;
 }
 
-// User functionalities
-vector<Property> User::addProperty(unordered_map<string, User>& users,
-                                   const string& currentUserId,
-                                   vector<Property>& pendingProp)
-{
-    if (users.find(currentUserId) == users.end()) {
-        cout << "Error: User not found." << endl;
-        return pendingProp;
-    }
-
-    // Get the user's existing properties
-    vector<Property>& userProperties = users[currentUserId].UserProperty;
-
-    // Find the last property ID (if any) for this user
-    int lastUserPropertyId = 0;
-    if (!userProperties.empty()) {
-        for (const Property& prop : userProperties) {
-            if (prop.getId() > lastUserPropertyId) {
-                lastUserPropertyId = prop.getId();
-            }
-        }
-    }
-
-    // Set the new property ID (it will be the next number after the last one)
-    int newId = lastUserPropertyId + 1;
-
-    string title, location, owner;
-    double price, area;
-    int bedrooms, bathrooms;
-
-    cout << "Enter property details:" << endl;
-    cout << "Title: ";
-    getline(cin, title);
-    cout << "Location: ";
-    getline(cin, location);
-    cout << "Owner's name: ";
-    getline(cin, owner);
-
-    cout << "Area (in sqft): "; cin >> area;
-    cout << "Price: "; cin >> price;
-    cout << "Number of bedrooms: "; cin >> bedrooms;
-    cout << "Number of bathrooms: "; cin >> bathrooms;
-    cin.ignore();
-
-    // Create the new property
-    Property p(newId, currentUserId, title, price, location, owner, area, bedrooms, bathrooms, Pending, false);
-
-    // Add the property to both the user's property list and the pending properties list
-    pendingProp.push_back(p);
-    users[currentUserId].UserProperty.push_back(p);
-
-    cout << "Property added and is now under review. Please wait for admin's approval." << endl;
-    return pendingProp;
-}
-
-void User::viewUserProperties(unordered_map<string, User>& users,
-                              const string& currentUserId, const string& stat) {
-    if (users.find(currentUserId) == users.end()) {
-        cout << "Error: User not found." << endl;
-        return;
-    }
-
-    vector<Property>& properties = users[currentUserId].UserProperty;
-
-    if (properties.empty()) {
-        cout << "You have not added any properties yet." << endl;
-        return;
-    }
-
-    PropertyStatus filterStatus;
-    if (stat == "Approved") filterStatus = Approved;
-    else if (stat == "Pending") filterStatus = Pending;
-    else if (stat == "Rejected") filterStatus = Rejected;
-    else {
-        cout << "Invalid status filter." << endl;
-        return;
-    }
-
-    bool found = false;
-    for (const auto& property : properties) {
-        if (property.getStatus() == filterStatus) {
-            found = true;
-            cout << "---------------------------" << endl;
-            cout << "Property ID: " << property.getId() << endl;
-            cout << "Title: " << property.getTitle() << endl;
-            cout << "Location: " << property.getLocation() << endl;
-            cout << "Owner: " << property.getOwnerName() << endl;
-            cout << "Area: " << property.getArea() << " sqft" << endl;
-            cout << "Price: $" << property.getPrice() << endl;
-            cout << "Bedrooms: " << property.getBedrooms() << endl;
-            cout << "Bathrooms: " << property.getBathrooms() << endl;
-            cout << "Status: " << checkPropertyStatus(property) << endl;
-
-            if (filterStatus == Approved) {
-                cout << "Sale Status: " << (property.getIsSold() ? "SOLD" : "Available for Sale") << endl;
-            }
-        }
-    }
-
-    if (!found) {
-        cout << "No properties found with status: " << stat << endl;
-    }
-}
+// user functionlaties
 void User::CompareProperties(const vector<Property>& properties) {
     if (properties.size() < 2) { //check if we have at least two properties to compare
         cout << "Sorry! there are no enough properties to Compare\n";
@@ -234,16 +134,16 @@ void User::CompareProperties(const vector<Property>& properties) {
     cout << "\n=== COMPARISON RESULTS (" << selectedProperties.size() << " properties) ===\n";
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
     cout << "| " << left << setw(8) << "ID" << " | " << setw(24) << "Property Name"
-         << " | " << setw(12) << "Location" << " | " << setw(12) << "Price"
-         << " | " << setw(15) << "Owner" << "|\n";
+        << " | " << setw(12) << "Location" << " | " << setw(12) << "Price"
+        << " | " << setw(15) << "Owner" << "|\n";
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
     //showing selected props info
     for (const auto& prop : selectedProperties) {
         cout << "| " << setw(8) << prop.getId()
-        << " | " << setw(24) << (prop.getTitle().substr(0, 23) + (prop.getTitle().length() > 23 ? "..." : ""))
-        << " | " << setw(12) << prop.getLocation()
-        << " | $" << setw(11) << fixed << setprecision(2) << prop.getPrice()
-        << " | " << setw(15) << prop.getOwnerName() << "|\n";
+            << " | " << setw(24) << (prop.getTitle().substr(0, 23) + (prop.getTitle().length() > 23 ? "..." : ""))
+            << " | " << setw(12) << prop.getLocation()
+            << " | $" << setw(11) << fixed << setprecision(2) << prop.getPrice()
+            << " | " << setw(15) << prop.getOwnerName() << "|\n";
     }
     cout << "+----------+--------------------------+--------------+--------------+-----------------+\n";
     //the props price range
@@ -255,7 +155,7 @@ void User::CompareProperties(const vector<Property>& properties) {
             if (prop.getPrice() > maxPrice) maxPrice = prop.getPrice();
         }
         cout << "\n  Price range: MIN " << minPrice << " -  MAX " << maxPrice
-             << " (Difference: " << (maxPrice - minPrice) << ")\n";
+            << " (Difference: " << (maxPrice - minPrice) << ")\n";
     }
 }
 vector<Property> User::searchProperties(const vector<Property>& properties, const string& location, double lowerPrice, double higherPrice, const string& type) {
@@ -446,8 +346,246 @@ vector<Property>User::binarySearchByArea(vector<Property>& properties, double ar
     }
     return result;
 }
+void User::displayResult(vector<Property>& properties) {
+    char Exit = 'y';
+    do {
+        int choice = 0;
+        cout << "Press \"1\" if you want to searching By Location,Price or Type" << endl;
+        cout << "Press \"2\" if you want to searching By Location only" << endl;
+        cout << "Press \"3\" if you want to searching By Price only" << endl;
+        cout << "Press \"4\" if you want to searching By Type only" << endl;
+        cout << "Press \"5\" if you want an advanced search" << endl;
+        std::cin >> choice;
+        switch (choice)
+        {
+        case 1: {
+            string location;
+            double lowerPrice;
+            double higherPrice;
+            string type;
+            cout << "Enter Your Desired Search!" << endl;
+            cout << "Location:";
+            std::cin >> location;
+            cout << "Lower Price:";
+            std::cin >> lowerPrice;
+            cout << "Higher Price:";
+            std::cin >> higherPrice;
+            cout << "Type:";
+            std::cin >> type;
+            vector<Property> propertyResult = this->searchProperties(properties, location, lowerPrice, higherPrice, type);
+            if (!propertyResult.empty()) {
+                for (const auto& prop : propertyResult) {
+                    cout << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location:" << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                        "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                }
+            }
+            else {
+                cout << "\nYour Property Search is not found!" << endl;
+            }
+            break;
+        }
+        case 2:
+        {
+            string location;
+            cout << "Enter Your Target Location:";
+            std::cin >> location;
+            vector<Property> locationResult = this->binarySearchByLocation(properties, location);
+            if (!locationResult.empty()) {
+                for (const auto& prop : locationResult) {
+                    cout << "\n\n" << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                        "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                }
+            }
+            else {
+                cout << "\nNot Found Any Property Has Location Like That!" << endl;
+            }
+            break;
+        }
+        case 3: {
+            double targetPrice;
+            cout << "Enter Your Target Price:";
+            std::cin >> targetPrice;
+            vector<Property> priceResult = this->binarySearchByPrice(properties, targetPrice);
+            if (!priceResult.empty()) {
+                for (const auto& prop : priceResult) {
+                    cout << "\n\n" << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                        "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                }
+            }
+            else {
+                cout << "\nNot Found Properties Match your Price Search! " << endl;
+            }
+            break;
+        }
+        case 4: {
+            string type;
+            cout << "Enter Your Target Type:";
+            std::cin >> type;
+            vector<Property> TypeResult = this->binarySearchByType(properties, type);
+            if (!TypeResult.empty()) {
+                for (const auto& prop : TypeResult) {
+                    cout << "\n\n" << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                        "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                }
+            }
+            else {
+                cout << "\nNot Found This Type Of Properties!" << endl;
+            }
+            break;
+        }
+        case 5: {
+            int index = 0;
+            cout << "Press \"1\" if you want to searching By square footage" << endl;
+            cout << "Press \"2\" if you want to searching By Number Of bedrooms" << endl;
+            std::cin >> index;
+            if (index == 1) {
+                double area;
+                cout << " Enter Your Target square footage:";
+                std::cin >> area;
+                vector<Property> areaResult = this->binarySearchByArea(properties, area);
+                if (!areaResult.empty()) {
+                    for (const auto& prop : areaResult) {
+                        cout << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location:" << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                            "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                    }
+                }
+                else {
+                    cout << "\nNot Found Property match your area!" << endl;
+                }
+                break;
+            }
+            if (index == 2)
+            {
+                int numOfBedRooms;
+                cout << "Enter number of bedRooms you want to Search about:";
+                std::cin >> numOfBedRooms;
+                vector<Property> bedroomsResult = this->binarySearchByNumOfBedRooms(properties, numOfBedRooms);
+                if (!bedroomsResult.empty()) {
+                    for (const auto& prop : bedroomsResult) {
+                        cout << "\n\n" << "Owner User Name:" << prop.getOwnerName() << "\n" << "Property Title:" << prop.getTitle() << "\n" << "Location: " << prop.getLocation() << "\t\t" << fixed << setprecision(2) << "Price:" << prop.getPrice() << "\n" << "Type: " << prop.getType() <<
+                            "\t\t" << "Number Of Bedrooms:" << prop.getBedrooms() << "\t\t" << "Number of Bathrooms:" << prop.getBathrooms() << "\t\t" << fixed << setprecision(2) << "Property Area:" << prop.getArea() << endl;
+                    }
+                }
+                else {
+                    cout << "\nNot Found Any Property Has this Number Of BedRooms!" << endl;
+                }
+                break;
+            }
+        }
+        default: {
+            cout << "invalid Choice!" << endl;
+            break;
+        }
+        }
+        cout << "\n\n" << "Do You Want To Make A new Search?(y/n):";
+        std::cin >> Exit;
+    } while (Exit == 'y' || Exit == 'Y');
+}
 
+vector<Property> User::addProperty(unordered_map<string, User>& users,
+    const string& currentUserId,
+    vector<Property>& pendingProp)
+{
+    if (users.find(currentUserId) == users.end()) {
+        cout << "Error: User not found." << endl;
+        return pendingProp;
+    }
 
+    // Get the user's existing properties
+    vector<Property>& userProperties = users[currentUserId].UserProperty;
+
+    // Find the last property ID (if any) for this user
+    int lastUserPropertyId = 0;
+    if (!userProperties.empty()) {
+        // Get the highest ID by iterating through the user's existing properties
+        for (const Property& prop : userProperties) {
+            if (prop.getId() > lastUserPropertyId) {
+                lastUserPropertyId = prop.getId();
+            }
+        }
+    }
+
+    // Set the new property ID (it will be the next number after the last one)
+    int newId = lastUserPropertyId + 1;
+
+    string title, location, owner, type;
+    double price, area;
+    int bedrooms, bathrooms;
+
+    cout << "Enter property details:" << endl;
+    cout << "Title: ";
+    getline(cin, title);
+    cout << "Location: ";
+    getline(cin, location);
+    cout << "Type: ";
+    getline(cin, type);
+    cout << "Owner's name: ";
+    getline(cin, owner);
+
+    cout << "Area (in sqft): "; cin >> area;
+    cout << "Price: "; cin >> price;
+    cout << "Number of bedrooms: "; cin >> bedrooms;
+    cout << "Number of bathrooms: "; cin >> bathrooms;
+    cin.ignore();
+
+    // Create the new property
+    Property p(newId, currentUserId, title, price, location, owner, area,type, bedrooms, bathrooms, Pending, false);
+
+    // Add the property to both the user's property list and the pending properties list
+    pendingProp.push_back(p);
+    users[currentUserId].UserProperty.push_back(p);
+
+    cout << "Property added and is now under review. Please wait for admin's approval." << endl;
+    return pendingProp;
+}
+void User::viewUserProperties(unordered_map<string, User>& users,
+    const string& currentUserId, const string& stat) {
+    if (users.find(currentUserId) == users.end()) {
+        cout << "Error: User not found." << endl;
+        return;
+    }
+
+    vector<Property>& properties = users[currentUserId].UserProperty;
+
+    if (properties.empty()) {
+        cout << "You have not added any properties yet." << endl;
+        return;
+    }
+
+    PropertyStatus filterStatus;
+    if (stat == "Approved") filterStatus = Approved;
+    else if (stat == "Pending") filterStatus = Pending;
+    else if (stat == "Rejected") filterStatus = Rejected;
+    else {
+        cout << "Invalid status filter." << endl;
+        return;
+    }
+
+    bool found = false;
+    for (const auto& property : properties) {
+        if (property.getStatus() == filterStatus) {
+            found = true;
+            cout << "---------------------------" << endl;
+            cout << "Property ID: " << property.getId() << endl;
+            cout << "Title: " << property.getTitle() << endl;
+            cout << "Location: " << property.getLocation() << endl;
+            cout << "Owner: " << property.getOwnerName() << endl;
+            cout << "Area: " << property.getArea() << " sqft" << endl;
+            cout << "Price: $" << property.getPrice() << endl;
+            cout << "Bedrooms: " << property.getBedrooms() << endl;
+            cout << "Bathrooms: " << property.getBathrooms() << endl;
+            cout << "Status: " << checkPropertyStatus(property) << endl;
+
+            if (filterStatus == Approved) {
+                cout << "Sale Status: " << (property.getIsSold() ? "SOLD" : "Available for Sale") << endl;
+            }
+        }
+    }
+
+    if (!found) {
+        cout << "No properties found with status: " << stat << endl;
+    }
+}
 void User::buyProperty(vector<Property>& properties, const string& buyerId) {
     cout << "Available Properties for Sale:\n";
     bool found = false;
@@ -492,6 +630,70 @@ string User::checkPropertyStatus(const Property& property) {
         return "Unknown Status";
     }
 }
+void User::manageUserProfile(unordered_map<string, User>& users, const string& userId) {
+    if (users.find(userId) == users.end()) {
+        cout << "User not found!\n";
+        return;
+    }
+
+    User& user = users[userId];
+    int choice;
+
+    do {
+        cout << "\n----- Manage User Profile -----\n";
+        cout << "1. View Profile\n";
+        cout << "2. Edit Username\n";
+        cout << "3. Edit Email\n";
+        cout << "4. Edit Password\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+        case 1:
+            cout << "ID: " << user.getId() << "\n";
+            cout << "Username: " << user.getUsername() << "\n";
+            cout << "Email: " << user.getEmail() << "\n";
+            break;
+
+        case 2: {
+            string newUsername;
+            cout << "Enter new username: ";
+            getline(cin, newUsername);
+            user.username = newUsername;
+            cout << "Username updated.\n";
+            break;
+        }
+
+        case 3: {
+            string newEmail;
+            cout << "Enter new email: ";
+            getline(cin, newEmail);
+            user.email = newEmail;
+            cout << "Email updated.\n";
+            break;
+        }
+
+        case 4: {
+            string newPass;
+            cout << "Enter new password: ";
+            getline(cin, newPass);
+            user.password = newPass;
+            cout << "Password updated.\n";
+            break;
+        }
+
+        case 0:
+            cout << "Exiting profile management.\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+
+    } while (choice != 0);
+}
 
 void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>& pendingAds, vector<Property>& approvedAds, const string& loggedInId) {
     while (true) {
@@ -501,26 +703,18 @@ void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>&
         cout << "3. View My Properties\n";
         cout << "4. Buy Property\n";
         cout << "5. Compare Properties\n";
-        cout << "6. Logout\n";
+        cout << "6. Manage your profile\n";
+        cout << "7. Logout\n";
         cout << "Choose: ";
         int userChoice;
         cin >> userChoice;
         cin.ignore();
 
         if (userChoice == 1) {
-            string location, type;
-            double minPrice, maxPrice;
-            cout << "Location: "; getline(cin, location);
-            cout << "Type: "; getline(cin, type);
-            cout << "Min Price: "; cin >> minPrice;
-            cout << "Max Price: "; cin >> maxPrice; cin.ignore();
-            auto results = searchProperties(approvedAds, location, minPrice, maxPrice, type);
-            cout << "\nSearch Results:\n";
-            for (const auto& prop : results) {
-                cout << "ID: " << prop.getId() << ", Title: " << prop.getTitle() << ", Price: " << prop.getPrice() << endl;
-            }
+            displayResult(approvedAds);
         }
-        else if (userChoice == 2) {
+        else if (userChoice == 2)
+        {
             addProperty(userMap, loggedInId, pendingAds);
         }
         else if (userChoice == 3) {
@@ -533,16 +727,11 @@ void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>&
             CompareProperties(approvedAds);
         }
         else if (userChoice == 6) {
+            manageUserProfile(userMap, loggedInId);
+        }
+        else if (userChoice == 7) {
             break;
         }
     }
-}
-QTextStream& operator<<(QTextStream& out, const User& user) {
-    out << QString::fromStdString(user.getId()) << ","
-        << QString::fromStdString(user.getUsername()) << ","
-        << QString::fromStdString(user.getEmail()) << ","
-        << QString::fromStdString(user.getPassword()) << ","
-        << "user";
-    return out;
 }
 User::~User() = default;
