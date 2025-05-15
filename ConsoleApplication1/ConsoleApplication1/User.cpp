@@ -346,7 +346,7 @@ vector<Property>User::binarySearchByArea(vector<Property>& properties, double ar
     }
     return result;
 }
-void User::displayResult(vector<Property>&properties) {
+void User::displayResult(vector<Property>& properties) {
     char Exit = 'y';
     do {
         int choice = 0;
@@ -508,7 +508,7 @@ vector<Property> User::addProperty(unordered_map<string, User>& users,
     // Set the new property ID (it will be the next number after the last one)
     int newId = lastUserPropertyId + 1;
 
-    string title, location, owner;
+    string title, location, owner, type;
     double price, area;
     int bedrooms, bathrooms;
 
@@ -517,6 +517,8 @@ vector<Property> User::addProperty(unordered_map<string, User>& users,
     getline(cin, title);
     cout << "Location: ";
     getline(cin, location);
+    cout << "Type: ";
+    getline(cin, type);
     cout << "Owner's name: ";
     getline(cin, owner);
 
@@ -527,7 +529,7 @@ vector<Property> User::addProperty(unordered_map<string, User>& users,
     cin.ignore();
 
     // Create the new property
-    Property p(newId, currentUserId, title, price, location, owner, area, bedrooms, bathrooms, Pending, false);
+    Property p(newId, currentUserId, title, price, location, owner, area,type, bedrooms, bathrooms, Pending, false);
 
     // Add the property to both the user's property list and the pending properties list
     pendingProp.push_back(p);
@@ -628,6 +630,71 @@ string User::checkPropertyStatus(const Property& property) {
         return "Unknown Status";
     }
 }
+void User::manageUserProfile(unordered_map<string, User>& users, const string& userId) {
+    if (users.find(userId) == users.end()) {
+        cout << "User not found!\n";
+        return;
+    }
+
+    User& user = users[userId];
+    int choice;
+
+    do {
+        cout << "\n----- Manage User Profile -----\n";
+        cout << "1. View Profile\n";
+        cout << "2. Edit Username\n";
+        cout << "3. Edit Email\n";
+        cout << "4. Edit Password\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+        case 1:
+            cout << "ID: " << user.getId() << "\n";
+            cout << "Username: " << user.getUsername() << "\n";
+            cout << "Email: " << user.getEmail() << "\n";
+            break;
+
+        case 2: {
+            string newUsername;
+            cout << "Enter new username: ";
+            getline(cin, newUsername);
+            user.username = newUsername;
+            cout << "Username updated.\n";
+            break;
+        }
+
+        case 3: {
+            string newEmail;
+            cout << "Enter new email: ";
+            getline(cin, newEmail);
+            user.email = newEmail;
+            cout << "Email updated.\n";
+            break;
+        }
+
+        case 4: {
+            string newPass;
+            cout << "Enter new password: ";
+            getline(cin, newPass);
+            user.password = newPass;
+            cout << "Password updated.\n";
+            break;
+        }
+
+        case 0:
+            cout << "Exiting profile management.\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+
+    } while (choice != 0);
+}
+
 void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>& pendingAds, vector<Property>& approvedAds, const string& loggedInId) {
     while (true) {
         cout << "\nUser Menu:\n";
@@ -636,7 +703,8 @@ void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>&
         cout << "3. View My Properties\n";
         cout << "4. Buy Property\n";
         cout << "5. Compare Properties\n";
-        cout << "6. Logout\n";
+        cout << "6. Manage your profile\n";
+        cout << "7. Logout\n";
         cout << "Choose: ";
         int userChoice;
         cin >> userChoice;
@@ -659,6 +727,9 @@ void User::userDashboard(unordered_map<string, User>& userMap, vector<Property>&
             CompareProperties(approvedAds);
         }
         else if (userChoice == 6) {
+            manageUserProfile(userMap, loggedInId);
+        }
+        else if (userChoice == 7) {
             break;
         }
     }
