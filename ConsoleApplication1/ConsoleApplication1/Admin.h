@@ -82,7 +82,7 @@ public:
         vector<Property>& ApprovedAds,
         vector<Property>& RejectedAds,
         vector<string>types,
-        vector<string>locations);
+        vector<string>locations, const string& loggedInId);
 
     //Habiba Basel
 
@@ -118,5 +118,5 @@ public:
     void showAllProperties(vector<Property>& approvedProperties,
         vector<Property>& pendingProperties,
         vector<Property>& rejectedProperties);
-
+    void manageAdminProfile(unordered_map<string, Admin>& admins, const string& adminId);
 };
