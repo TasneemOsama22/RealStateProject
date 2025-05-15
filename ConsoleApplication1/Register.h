@@ -1,26 +1,21 @@
-#ifndef REGISTER_H
-#define REGISTER_H
-
-#include <QString>
-#include <unordered_map>
+#include <string>
 #include "User.h"
 #include "Admin.h"
-
+using namespace std;
 class Register {
 public:
-    QString registerUser(const QString& name,
-                         const QString& email,
-                         const QString& password,
-                         const QString& type,
-                         std::unordered_map<std::string, User>& userMap,
-                         std::unordered_map<std::string, Admin>& adminMap);
+    bool registerUser(unordered_map<string, User>& userMap, unordered_map<string, Admin>& adminMap);
 
 private:
-    bool isEmailValid(const std::string& email);
-    bool isPasswordStrong(const std::string& password);
-    std::string generateUniqueID(const std::unordered_map<std::string, User>& userMap,
-                                 const std::unordered_map<std::string, Admin>& adminMap,
-                                 const std::string& type);
-};
 
-#endif // REGISTER_H
+    bool isEmailValid(const string& email);
+    bool isPasswordStrong(const string& password);
+    string detectType();
+    string generateUniqueID(
+        const unordered_map<string, User>& userMap,
+        const unordered_map<string, Admin>& adminMap,
+        const string& type
+    );
+
+
+};
