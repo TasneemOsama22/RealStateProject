@@ -86,12 +86,6 @@ public:
 
     //Habiba Basel
 
-    void loadListings(vector<Property>& approvedProperties,
-        vector<Property>& pendingProperties,
-        vector<Property>& rejectedProperties);
-    void saveListings(vector<Property>& approvedProperties,
-        vector<Property>& pendingProperties,
-        vector<Property>& rejectedProperties);
     int generateNewId(vector<Property>& approvedProperties,
         vector<Property>& pendingProperties,
         vector<Property>& rejectedProperties);
