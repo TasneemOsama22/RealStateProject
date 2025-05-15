@@ -16,7 +16,7 @@ Admin::Admin(string Id, string password) {
     this->Id = Id;
     this->Password = password;
 }
-Admin::Admin(const string id, const string Username, const string email , const string Pass) {
+Admin::Admin(const string id, const string Username, const string email, const string Pass) {
     this->Id = id;
     this->Email = email;
     this->Username = Username;
@@ -74,7 +74,7 @@ void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& App
     int counter = 0;
     cout << "There are " << PendingAds.size() << " Pending Property Lists\n";
     for (int i = 0; i < PendingAds.size(); ) {
-        Property& ad = PendingAds[i]; 
+        Property& ad = PendingAds[i];
         string Userid = ad.getUserId();
         cout << "\n================= Pending Property Review=================" << endl;
         cout << "Ad Number          : " << ++counter << endl;
@@ -428,7 +428,6 @@ void Admin::RemoveAdmin(unordered_map<string, Admin>& Admins,
     if (removepass != Admins.end()) {
         Admins.erase(removepass);
         cout << "Admin removed successfuly.\n" << endl;
-        showAdminDashboard(Admins, Users, PendingAds, ApprovedAds, RejectedAds, types, locations);
     }
     else {
         cout << "Not found admin has that password!" << endl;
@@ -980,13 +979,78 @@ void Admin::showAllProperties(vector<Property>& approvedProperties,
     }
     cout << "==================================================================================================================================\n";
 }
+void Admin::manageAdminProfile(unordered_map<string, Admin>& admins, const string& adminId) {
+    if (admins.find(adminId) == admins.end()) {
+        cout << "Admin not found!\n";
+        return;
+    }
+
+    Admin& admin = admins[adminId];
+    int choice;
+
+    do {
+        cout << "\n----- Manage Admin Profile -----\n";
+        cout << "1. View Profile\n";
+        cout << "2. Edit Username\n";
+        cout << "3. Edit Email\n";
+        cout << "4. Edit Password\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+        case 1:
+            cout << "ID: " << admin.getId() << "\n";
+            cout << "Username: " << admin.getUsername() << "\n";
+            cout << "Email: " << admin.getEmail() << "\n";
+            break;
+
+        case 2: {
+            string newUsername;
+            cout << "Enter new username: ";
+            getline(cin, newUsername);
+            admin.setUsername(newUsername);
+            cout << "Username updated.\n";
+            break;
+        }
+
+        case 3: {
+            string newEmail;
+            cout << "Enter new email: ";
+            getline(cin, newEmail);
+            admin.setEmail(newEmail);
+            cout << "Email updated.\n";
+            break;
+        }
+
+        case 4: {
+            string newPass;
+            cout << "Enter new password: ";
+            getline(cin, newPass);
+            admin.setPassword(newPass);
+            cout << "Password updated.\n";
+            break;
+        }
+
+        case 0:
+            cout << "Exiting profile management.\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+
+    } while (choice != 0);
+}
+
 void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
     vector<Property>& ApprovedAds,
     vector<Property>& RejectedAds,
     vector<string>types,
-    vector<string>locations) {
+    vector<string>locations, const string& loggedInId) {
     int choice;
     while (true) {
         cout << "Admin Dashboard" << endl;
@@ -1001,9 +1065,10 @@ void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
         cout << "8. View approved Property lists" << endl;
         cout << "9. Moderate user activities" << endl;
         cout << "10. View user info" << endl;
-        cout << "11. Exit" << endl;
+        cout << "11. Manage your profile" << endl;
+        cout << "12. Exit" << endl;
         cout << "--------------------------" << endl;
-        cout << "Enter your choice (1-11)" << endl;
+        cout << "Enter your choice (1-12)" << endl;
         cin >> choice;
         cout << endl;
         cin.ignore();
@@ -1047,6 +1112,8 @@ void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
             ViewUserInfo(Users);
             break;
         case 11:
+            manageAdminProfile(Admins, loggedInId);
+        case 12:
             cout << "Logging out... " << endl;
             return;
         default:
