@@ -10,32 +10,28 @@
 #include <sstream>
 #include <algorithm>
 using namespace std;
+// constructors
 Admin::Admin() {}
 Admin::Admin(string Id, string password) {
     this->Id = Id;
     this->Password = password;
 }
-
-
-Admin::Admin(const string Username, const string Email, const string Id, const string Pass) {
+Admin::Admin(const string id, const string Username, const string email, const string Pass) {
+    this->Id = id;
+    this->Email = email;
     this->Username = Username;
-    this->Email = Email;
-    this->Id = Id;
     this->Password = Pass;
 }
-
+// setters
 void Admin::setUsername(const string& newUsername) {
     Username = newUsername;
 }
-
 void Admin::setEmail(const string& newEmail) {
     Email = newEmail;
 }
-
 void Admin::setPassword(const string& newPassword) {
     Password = newPassword;
 }
-
 void Admin::setId(const string& newId) {
     Id = newId;
 }
@@ -43,40 +39,42 @@ void Admin::setId(const string& newId) {
 string Admin::getUsername() const {
     return Username;
 }
-
 string Admin::getEmail() const {
     return Email;
 }
-
 string Admin::getPassword() const {
     return Password;
 }
-
 string Admin::getId() const {
     return Id;
 }
-
+// admin functionalites
 void Admin::ViewApprovedAds(vector<Property>& ApprovedAds) {
-    int AdsCount = 0;
-    for (int i = 0; i < ApprovedAds.size(); i++) {
-        cout << "\n========== Approved Property Ad ==========" << endl;
-        cout << "Ad Number          : " << ++AdsCount << endl;
-        cout << "Ad ID              : " << ApprovedAds[i].getId() << endl;
-        cout << "Title              : " << ApprovedAds[i].getTitle() << endl;
-        cout << "User ID            : " << ApprovedAds[i].getUserId() << endl;
-        cout << "User Name          : " << ApprovedAds[i].getOwnerUsername() << endl;
-        cout << "Location           : " << ApprovedAds[i].getLocation() << endl;
-        cout << "Area               : " << ApprovedAds[i].getArea() << endl;
-        cout << "Number of Bedrooms : " << ApprovedAds[i].getBedrooms() << endl;
-        cout << "Number of Bathrooms: " << ApprovedAds[i].getBathrooms() << endl;
-        cout << "Price              : " << ApprovedAds[i].getPrice() << " EGP" << endl;
-        cout << "==========================================\n" << endl;
+    if (ApprovedAds.empty()) {
+        cout << "There are no approved Ads.\n";
+        return;
     }
 
+    int AdsCount = 0;
+    for (const auto& ad : ApprovedAds) {
+        cout << "\n========== Approved Property Ad ==========" << endl;
+        cout << "Ad Number          : " << ++AdsCount << endl;
+        cout << "Ad ID              : " << ad.getId() << endl;
+        cout << "Title              : " << ad.getTitle() << endl;
+        cout << "Type               : " << ad.getType() << endl;
+        cout << "User ID            : " << ad.getUserId() << endl;
+        cout << "User Name          : " << ad.getOwnerName() << endl;
+        cout << "Location           : " << ad.getLocation() << endl;
+        cout << "Area               : " << ad.getArea() << " sqm" << endl;
+        cout << "Number of Bedrooms : " << ad.getBedrooms() << endl;
+        cout << "Number of Bathrooms: " << ad.getBathrooms() << endl;
+        cout << "Price              : " << ad.getPrice() << " EGP" << endl;
+        cout << "Highlighted        : " << (ad.isHighlighted() ? "Yes" : "No") << endl;
+        cout << "Sold               : " << (ad.getIsSold() ? "Yes" : "No") << endl;
 
+        cout << "==========================================\n" << endl;
+    }
 }
-
-
 
 void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& ApprovedAds, vector<Property>& RejectedAds, unordered_map<string, User>& Users) {
     if (PendingAds.empty()) {
@@ -96,7 +94,7 @@ void Admin::ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& App
         cout << "Ad ID              : " << ad.getId() << endl;
         cout << "Title              : " << ad.getTitle() << endl;
         cout << "User ID            : " << ad.getUserId() << endl;
-        cout << "User Name          : " << ad.getOwnerUsername() << endl;
+        cout << "User Name          : " << ad.getOwnerName() << endl;
         cout << "Location           : " << ad.getLocation() << endl;
         cout << "Area               : " << ad.getArea() << endl;
         cout << "Number of Bedrooms : " << ad.getBedrooms() << endl;
@@ -441,30 +439,26 @@ void Admin::ViewUserInfo(unordered_map<string, User>& Users) {
             << endl;
     }
 }
-
-bool Admin::checkisadmin(string& username, string& password, unordered_map<string, Admin>& Admins) {
+/*bool Admin::checkisadmin(string& username, string& password, unordered_map<string, Admin>& Admins) {
 
     auto adminsdata = Admins.find(password);
     return adminsdata != Admins.end() && adminsdata->second == username;
 
-}
+}*/
 
 void Admin::AddnewAdmin(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
     vector<Property>& ApprovedAds) {
-
     string username, password;
-
     cout << "Enter new username:" << endl;
     getline(cin, username);
     cout << "Enter new password:" << endl;
     getline(cin, password);
 
-    Admins[password] = username;
+    Admins[password].setUsername(username);
     cout << "New admin added successfuly." << endl;
 }
-
 void Admin::RemoveAdmin(unordered_map<string, Admin>& Admins,
     unordered_map<string, User>& Users,
     vector<Property>& PendingAds,
@@ -475,137 +469,19 @@ void Admin::RemoveAdmin(unordered_map<string, Admin>& Admins,
     string password;
     cout << "Enter password of the admin to remove:" << endl;
     getline(cin, password);
-
     auto removepass = Admins.find(password);
     if (removepass != Admins.end()) {
         Admins.erase(removepass);
         cout << "Admin removed successfuly.\n" << endl;
-        showAdminDashboard(Admins, Users, PendingAds, ApprovedAds, RejectedAds, types, locations);
     }
     else {
         cout << "Not found admin has that password!" << endl;
     }
 }
 
-void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
-    unordered_map<string, User>& Users,
-    vector<Property>& PendingAds,
-    vector<Property>& ApprovedAds,
-    vector<Property>& RejectedAds,
-    vector<string>types,
-    vector<string>locations) {
-    int choice;
-    while (true) {
-        cout << "Admin Dashboard" << endl;
-        cout << "--------------------------" << endl;
-        cout << "1. Add New property" << endl;
-        cout << "2. Edit property" << endl;
-        cout << "3. Remove property" << endl;
-        cout << "4. Highlight specific property" << endl;
-        cout << "5. Add new admin" << endl;
-        cout << "6. Remove admin" << endl;
-        cout << "7. Review pending property lists" << endl;
-        cout << "8. View approved Property lists" << endl;
-        cout << "9. Moderate user activities" << endl;
-        cout << "10. View user info" << endl;
-        cout << "11. Exit" << endl;
-        cout << "--------------------------" << endl;
-        cout << "Enter your choice (1-11)" << endl;
-
-        cin >> choice;
-        cout << endl;
-        cin.ignore();
-
-        switch (choice) {
-        case 1:
-            cout << "Add new property:-" << endl;
-            addProperty(ApprovedAds, PendingAds, RejectedAds, types, locations);
-            break;
-        case 2:
-            cout << "Edit property:-" << endl;
-            editProperty(ApprovedAds, PendingAds, RejectedAds, types, locations);
-            break;
-        case 3:
-            cout << "Remove property:-" << endl;
-            removeProperty(ApprovedAds, PendingAds, RejectedAds);
-            break;
-        case 4:
-            cout << "Highlight property:-" << endl;
-            toggleHighlightProperty(ApprovedAds, PendingAds, RejectedAds);
-            break;
-
-        case 5:
-            cout << "Add new admin:-" << endl;
-            AddnewAdmin(Admins, Users, PendingAds, ApprovedAds);
-            break;
-        case 6:
-            cout << "Remove Admin:-" << endl;
-            RemoveAdmin(Admins, Users, PendingAds, ApprovedAds, RejectedAds, types, locations);
-            break;
-        case 7:
-            ReviewPendingAds(PendingAds, ApprovedAds, RejectedAds, Users);
-            break;
-        case 8:
-            ViewApprovedAds(ApprovedAds);
-            break;
-        case 9:
-            ModerateUserActivity(Users, ApprovedAds, PendingAds);
-            break;
-        case 10:
-            ViewUserInfo(Users);
-            break;
-        case 11:
-            cout << "Logging out... " << endl;
-            return;
-        default:
-            cout << "Invalid choice, please enter a choice from 1 to 12." << endl;
-        }
-    }
-}
 
 
-void Admin::loadListings(vector<Property>& approvedProperties,
-    vector<Property>& pendingProperties,
-    vector<Property>& rejectedProperties) {
-    ifstream file("listings.txt");
-    if (!file) {
-        cout << "Error: Could not open listings.txt\n";
-        return;
-    }
 
-    string line;
-    while (getline(file, line)) {
-        Property p;
-        p.fromFileString(line);
-
-        switch (p.getStatus()) {
-        case Approved: approvedProperties.push_back(p); break;
-        case Pending: pendingProperties.push_back(p); break;
-        case Rejected: rejectedProperties.push_back(p); break;
-        }
-    }
-
-    file.close();
-}
-
-void Admin::saveListings(vector<Property>& approvedProperties,
-    vector<Property>& pendingProperties,
-    vector<Property>& rejectedProperties) {
-    ofstream file("listings.txt");
-    if (!file) {
-        cout << "Error: Could not open listings.txt for writing\n";
-        return;
-    }
-
-    for (const Property& p : approvedProperties)
-        file << p.toFileString() << endl;
-    for (const Property& p : pendingProperties)
-        file << p.toFileString() << endl;
-    for (const Property& p : rejectedProperties)
-        file << p.toFileString() << endl;
-
-    file.close();
-}
 
 int Admin::generateNewId(vector<Property>& approvedProperties,
     vector<Property>& pendingProperties,
@@ -618,11 +494,8 @@ int Admin::generateNewId(vector<Property>& approvedProperties,
         maxId = max(maxId, p.getId());
     for (const Property& p : rejectedProperties)
         maxId = max(maxId, p.getId());
-
-
     return maxId + 1;
 }
-
 string Admin::chooseType(vector<string>& types) {
     int choice;
     while (true) {
@@ -640,7 +513,6 @@ string Admin::chooseType(vector<string>& types) {
         cout << "Invalid choice. Please try again.\n";
     }
 }
-
 string Admin::chooseLocation(vector<string>& locations) {
     int choice;
     while (true) {
@@ -666,38 +538,30 @@ void Admin::addProperty(vector<Property>& approvedProperties,
     vector<string>& locations) {
     Property p;
     cout << "\n--- Add New Property ---\n";
-
     p.setId(generateNewId(approvedProperties, pendingProperties, rejectedProperties));
-    cin.ignore();
-
     string title;
     cout << "Enter Title: ";
     getline(cin, title);
     p.setTitle(title);
-
     p.setType(chooseType(types));
     p.setLocation(chooseLocation(locations));
-
     double price;
     do {
         cout << "Enter Price: ";
         cin >> price;
         if (price < 0)
             cout << "Price cannot be negative. Try again.\n";
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();
     } while (price < 0);
     p.setPrice(price);
-
     string owner;
     cout << "Enter Owner Name: ";
-    getline(cin, owner);  // No need for cin.ignore() here because getline doesn't leave an extra newline
+    getline(cin, owner);
     p.setOwnerName(owner);
-
     string userId;
     cout << "Enter User ID: ";
-    getline(cin, userId);  // No need for cin.ignore() here either
+    getline(cin, userId);
     p.setUserId(userId);
-
     double area;
     do {
         cout << "Enter Area (Square meter): ";
@@ -705,10 +569,9 @@ void Admin::addProperty(vector<Property>& approvedProperties,
         if (area < 0) {
             cout << "Area cannot be negative. Try again.\n";
         }
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();
     } while (area < 0);
     p.setArea(area);
-
     int bedrooms;
     do {
         cout << "Enter Number of Bedrooms: ";
@@ -716,10 +579,9 @@ void Admin::addProperty(vector<Property>& approvedProperties,
         if (bedrooms < 0) {
             cout << "Bedrooms cannot be negative. Try again.\n";
         }
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();
     } while (bedrooms < 0);
     p.setBedrooms(bedrooms);
-
     int bathrooms;
     do {
         cout << "Enter Number of Bathrooms: ";
@@ -727,25 +589,24 @@ void Admin::addProperty(vector<Property>& approvedProperties,
         if (bathrooms < 0) {
             cout << "Bathrooms cannot be negative. Try again.\n";
         }
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();
     } while (bathrooms < 0);
     p.setBathrooms(bathrooms);
-
     int isHighlighted;
     do {
         cout << "Highlight this property? (1: Yes, 0: No): ";
         cin >> isHighlighted;
         if (isHighlighted != 0 && isHighlighted != 1)
             cout << "Invalid input. Please enter 1 (Yes) or 0 (No).\n";
-        cin.ignore();  // Clear the input buffer
+        cin.ignore();
     } while (isHighlighted != 0 && isHighlighted != 1);
 
     p.setHighlighted(isHighlighted == 1);
 
+    p.setIsSold(false);
+
     p.setStatus(Pending);
     pendingProperties.push_back(p);
-
-    //saveListings();
 
     cout << "\nProperty added successfully! ID: " << p.getId() << "\n";
 }
@@ -758,7 +619,6 @@ void Admin::editProperty(vector<Property>& approvedProperties,
     vector<Property>* selectedList = nullptr;
     int choice1;
     cout << "\n--- Edit Property ---\n";
-
     while (true) {
         cout << "\nChoose the property list to edit from:\n";
         cout << "1. Approved\n";
@@ -783,11 +643,9 @@ void Admin::editProperty(vector<Property>& approvedProperties,
             cout << "Invalid choice. Please try again.\n";
         }
     }
-
     cout << "Enter the ID of the property to edit: ";
     int id;
     cin >> id;
-
     for (size_t i = 0; i < selectedList->size(); ++i) {
         if ((*selectedList)[i].getId() == id) {
             Property& p = (*selectedList)[i];
@@ -805,7 +663,8 @@ void Admin::editProperty(vector<Property>& approvedProperties,
                 cout << "7. Bedrooms (" << p.getBedrooms() << ")\n";
                 cout << "8. Bathrooms (" << p.getBathrooms() << ")\n";
                 cout << "9. Status (" << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected")) << ")\n";
-                cout << "10. Exit\n";
+                cout << "10. Sold Status (" << (p.getIsSold() ? "Sold" : "Available") << ")\n";
+                cout << "11. Exit\n";
                 cout << "Enter your choice: ";
                 cin >> choice;
 
@@ -899,12 +758,23 @@ void Admin::editProperty(vector<Property>& approvedProperties,
                         selectedList->erase(selectedList->begin() + i);
 
                         cout << "Property moved to new list and updated.\n";
-                        saveListings(approvedProperties, pendingProperties, rejectedProperties);
+
                         return;
                     }
                     break;
                 }
-                case 10:
+                case 10: {
+                    int newSoldStatus;
+                    do {
+                        cout << "Is the property sold? (1: Yes, 0: No): ";
+                        cin >> newSoldStatus;
+                        if (newSoldStatus != 0 && newSoldStatus != 1)
+                            cout << "Invalid input. Please enter 1 (Yes) or 0 (No).\n";
+                    } while (newSoldStatus != 0 && newSoldStatus != 1);
+                    p.setIsSold(newSoldStatus == 1);
+                    break;
+                }
+                case 11:
                     cout << "Exiting Edit Menu.\n";
                     break;
                 default:
@@ -912,7 +782,7 @@ void Admin::editProperty(vector<Property>& approvedProperties,
                 }
             } while (choice != 10);
 
-            //saveListings(approvedProperties,pendingProperties,rejectedProperties);
+
             cout << "Property updated and saved.\n";
             return;
         }
@@ -925,9 +795,7 @@ void Admin::removeProperty(vector<Property>& approvedProperties,
     vector<Property>& rejectedProperties) {
     vector<Property>* selectedList = nullptr;
     int choice;
-
     cout << "\n--- Remove Property ---\n";
-
     while (true) {
         cout << "Select the list to remove from:\n";
         cout << "1. Approved Properties\n";
@@ -957,11 +825,9 @@ void Admin::removeProperty(vector<Property>& approvedProperties,
             cout << "Invalid choice. Please try again.\n";
         }
     }
-
     int id;
     cout << "Enter Property ID to remove: ";
     cin >> id;
-
     bool found = false;
     for (auto it = selectedList->begin(); it != selectedList->end(); ++it) {
         if (it->getId() == id) {
@@ -972,7 +838,7 @@ void Admin::removeProperty(vector<Property>& approvedProperties,
     }
 
     if (found) {
-        //saveListings(approvedProperties,pendingProperties,rejectedProperties);
+
         cout << "Property removed successfully.\n";
     }
     else {
@@ -983,14 +849,13 @@ void Admin::removeProperty(vector<Property>& approvedProperties,
 bool Admin::compareHighlighted(const Property& a, const Property& b) {
     return a.isHighlighted() > b.isHighlighted();
 }
+
 void Admin::toggleHighlightProperty(vector<Property>& approvedProperties,
     vector<Property>& pendingProperties,
     vector<Property>& rejectedProperties) {
     vector<Property>* selectedList = nullptr;
     int choice;
-
     cout << "\n--- Toggle Highlight ---\n";
-
     while (true) {
         cout << "Select the list to toggle highlight from:\n";
         cout << "1. Approved Properties\n";
@@ -1020,114 +885,35 @@ void Admin::toggleHighlightProperty(vector<Property>& approvedProperties,
             cout << "Invalid choice. Please try again.\n";
         }
     }
-
     int id;
     cout << "Enter Property ID: ";
     cin >> id;
-
     for (Property& p : *selectedList) {
         if (p.getId() == id) {
             p.setHighlighted(!p.isHighlighted());
             cout << "Highlight status toggled successfully " << ".\n";
-            //saveListings();
+
             return;
         }
     }
-
     cout << "Property not found in the selected list.\n";
 }
 
 void Admin::showAllProperties(vector<Property>& approvedProperties,
     vector<Property>& pendingProperties,
     vector<Property>& rejectedProperties) {
+
     cout << fixed << setprecision(2);
-
-    vector<Property>* listingsToShow = nullptr;
-
-    while (true) {
-        int choice;
-        cout << "\nChoose which listings to display:\n";
-        cout << "1. Approved Listings\n";
-        cout << "2. Pending Listings\n";
-        cout << "3. Rejected Listings\n";
-        cout << "4. Show All Listings\n";
-        cout << "5. Back\n";
-        cout << "Enter your choice: ";
-        cin >> choice;
-
-        if (choice == 1) {
-            listingsToShow = &approvedProperties;
-            break;
-        }
-        else if (choice == 2) {
-            listingsToShow = &pendingProperties;
-            break;
-        }
-        else if (choice == 3) {
-            listingsToShow = &rejectedProperties;
-            break;
-        }
-        else if (choice == 4) {
-
-            vector<Property> combinedListings;
-            combinedListings.insert(combinedListings.end(), approvedProperties.begin(), approvedProperties.end());
-            combinedListings.insert(combinedListings.end(), pendingProperties.begin(), pendingProperties.end());
-            combinedListings.insert(combinedListings.end(), rejectedProperties.begin(), rejectedProperties.end());
-
-
-            // sort(combinedListings.begin(), combinedListings.end(), compareHighlighted);
-
-
-            cout << "\n======================================================== Property Listings =======================================================\n";
-            cout << left
-                << setw(5) << "HL"
-                << setw(7) << "ID"
-                << setw(20) << "Title"
-                << setw(13) << "Type"
-                << setw(15) << "Location"
-                << setw(13) << "Price"
-                << setw(16) << "Owner"
-                << setw(10) << "Bedrooms"
-                << setw(12) << "Bathrooms"
-                << setw(10) << "Area"
-                << setw(15) << "Status" << endl;
-
-            cout << "----------------------------------------------------------------------------------------------------------------------------------\n";
-
-            for (Property& p : combinedListings) {
-                cout << setw(5) << (p.isHighlighted() ? "*" : "")
-                    << setw(7) << p.getId()
-                    << setw(20) << p.getTitle()
-                    << setw(13) << p.getType()
-                    << setw(15) << p.getLocation()
-                    << setw(13) << p.getPrice()
-                    << setw(16) << p.getOwnerName()
-                    << setw(10) << p.getBedrooms()
-                    << setw(12) << p.getBathrooms()
-                    << setw(10) << p.getArea()
-                    << setw(15) << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected"))
-                    << endl;
-            }
-
-            if (combinedListings.empty()) {
-                cout << "No properties listed yet.\n";
-            }
-            cout << "==================================================================================================================================\n";
-            return;
-        }
-        else if (choice == 5) {
-            cout << "Returning to the main menu...\n";
-            return;
-        }
-        else {
-            cout << "Invalid choice. Please try again.\n";
-        }
+    vector<Property> combinedListings;
+    combinedListings.insert(combinedListings.end(), approvedProperties.begin(), approvedProperties.end());
+    combinedListings.insert(combinedListings.end(), pendingProperties.begin(), pendingProperties.end());
+    combinedListings.insert(combinedListings.end(), rejectedProperties.begin(), rejectedProperties.end());
+    if (combinedListings.empty()) {
+        cout << "No properties listed yet.\n";
+        return;
     }
-
-
-    //sort(listingsToShow.begin(), listingsToShow.end(), compareHighlighted);
-
-    cout << "\n======================================================== Property Listings =======================================================\n";
+    sort(combinedListings.begin(), combinedListings.end(), compareHighlighted);
+    cout << "\n============================================================= Property Listings ==============================================================\n";
     cout << left
         << setw(5) << "HL"
         << setw(7) << "ID"
@@ -1139,11 +925,10 @@ void Admin::showAllProperties(vector<Property>& approvedProperties,
         << setw(10) << "Bedrooms"
         << setw(12) << "Bathrooms"
         << setw(10) << "Area"
+        << setw(13) << "Sold"
         << setw(15) << "Status" << endl;
-
-    cout << "----------------------------------------------------------------------------------------------------------------------------------\n";
-
-    for (Property& p : *listingsToShow) {
+    cout << "----------------------------------------------------------------------------------------------------------------------------------------------\n";
+    for (Property& p : combinedListings) {
         cout << setw(5) << (p.isHighlighted() ? "*" : "")
             << setw(7) << p.getId()
             << setw(20) << p.getTitle()
@@ -1154,17 +939,160 @@ void Admin::showAllProperties(vector<Property>& approvedProperties,
             << setw(10) << p.getBedrooms()
             << setw(12) << p.getBathrooms()
             << setw(10) << p.getArea()
+            << setw(13) << (p.getIsSold() ? "Sold" : "Available")
             << setw(15) << (p.getStatus() == Approved ? "Approved" : (p.getStatus() == Pending ? "Pending" : "Rejected"))
             << endl;
     }
 
-    if (listingsToShow->empty()) {
-        cout << "No properties listed yet.\n";
-    }
 
-    cout << "==================================================================================================================================\n";
+    cout << "==============================================================================================================================================\n";
+    return;
+
 }
 
+void Admin::manageAdminProfile(unordered_map<string, Admin>& admins, const string& adminId) {
+    if (admins.find(adminId) == admins.end()) {
+        cout << "Admin not found!\n";
+        return;
+    }
 
+    Admin& admin = admins[adminId];
+    int choice;
 
+    do {
+        cout << "\n----- Manage Admin Profile -----\n";
+        cout << "1. View Profile\n";
+        cout << "2. Edit Username\n";
+        cout << "3. Edit Email\n";
+        cout << "4. Edit Password\n";
+        cout << "0. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+        cin.ignore();
 
+        switch (choice) {
+        case 1:
+            cout << "ID: " << admin.getId() << "\n";
+            cout << "Username: " << admin.getUsername() << "\n";
+            cout << "Email: " << admin.getEmail() << "\n";
+            break;
+
+        case 2: {
+            string newUsername;
+            cout << "Enter new username: ";
+            getline(cin, newUsername);
+            admin.setUsername(newUsername);
+            cout << "Username updated.\n";
+            break;
+        }
+
+        case 3: {
+            string newEmail;
+            cout << "Enter new email: ";
+            getline(cin, newEmail);
+            admin.setEmail(newEmail);
+            cout << "Email updated.\n";
+            break;
+        }
+
+        case 4: {
+            string newPass;
+            cout << "Enter new password: ";
+            getline(cin, newPass);
+            admin.setPassword(newPass);
+            cout << "Password updated.\n";
+            break;
+        }
+
+        case 0:
+            cout << "Exiting profile management.\n";
+            break;
+
+        default:
+            cout << "Invalid choice.\n";
+        }
+
+    } while (choice != 0);
+}
+
+void Admin::showAdminDashboard(unordered_map<string, Admin>& Admins,
+    unordered_map<string, User>& Users,
+    vector<Property>& PendingAds,
+    vector<Property>& ApprovedAds,
+    vector<Property>& RejectedAds,
+    vector<string>types,
+    vector<string>locations, const string& loggedInId) {
+    int choice;
+    while (true) {
+        cout << "Admin Dashboard" << endl;
+        cout << "--------------------------" << endl;
+        cout << "1.  Add New property" << endl;
+        cout << "2.  Edit property" << endl;
+        cout << "3.  Remove property" << endl;
+        cout << "4.  Highlight specific property" << endl;
+        cout << "5.  Add new admin" << endl;
+        cout << "6.  Remove admin" << endl;
+        cout << "7.  Review pending property lists" << endl;
+        cout << "8.  View approved Property lists" << endl;
+        cout << "9.  View All Property lists" << endl;
+        cout << "10. Moderate user activities" << endl;
+        cout << "11. View user info" << endl;
+        cout << "12. Manage your profile" << endl;
+        cout << "13. Exit" << endl;
+        cout << "--------------------------" << endl;
+        cout << "Enter your choice (1-13)" << endl;
+        cin >> choice;
+        cout << endl;
+        cin.ignore();
+
+        switch (choice) {
+        case 1:
+
+            addProperty(ApprovedAds, PendingAds, RejectedAds, types, locations);
+            break;
+        case 2:
+
+            editProperty(ApprovedAds, PendingAds, RejectedAds, types, locations);
+            break;
+        case 3:
+
+            removeProperty(ApprovedAds, PendingAds, RejectedAds);
+            break;
+        case 4:
+
+            toggleHighlightProperty(ApprovedAds, PendingAds, RejectedAds);
+            break;
+
+        case 5:
+            cout << "Add new admin:-" << endl;
+            AddnewAdmin(Admins, Users, PendingAds, ApprovedAds);
+            break;
+        case 6:
+            cout << "Remove Admin:-" << endl;
+            RemoveAdmin(Admins, Users, PendingAds, ApprovedAds, RejectedAds, types, locations);
+            break;
+        case 7:
+            ReviewPendingAds(PendingAds, ApprovedAds, RejectedAds, Users);
+            break;
+        case 8:
+            ViewApprovedAds(ApprovedAds);
+            break;
+        case 9:
+            showAllProperties(ApprovedAds, PendingAds, RejectedAds);
+            break;
+        case 10:
+            ModerateUserActivity(Users, ApprovedAds, PendingAds);
+            break;
+        case 11:
+            ViewUserInfo(Users);
+            break;
+        case 12:
+            manageAdminProfile(Admins, loggedInId);
+        case 13:
+            cout << "Logging out... " << endl;
+            return;
+        default:
+            cout << "Invalid choice, please enter a choice from 1 to 12." << endl;
+        }
+    }
+}
