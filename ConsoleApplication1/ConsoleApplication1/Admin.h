@@ -34,11 +34,24 @@ public:
     string getPassword()const;
     string getId()const;
     // view all pending ads
-    void ReviewPendingAds(vector<Property>& PendingAds, vector<Property>& ApprovedAds, vector<Property>& RejectedAds, unordered_map <string, User>& Users);
+    void ReviewPendingAds(vector<Property>& PendingAds,
+                         vector<Property>& ApprovedAds,
+                         vector<Property>& RejectedAds, 
+                         unordered_map <string, User>& Users);
     // Approve ad
-    void ApproveAd(Property ad, vector<Property>& approvedAds, vector<Property>& PendingAds, string UserId, unordered_map <string, User>& Users);
+    void ApproveAd(Property ad, 
+                   vector<Property>& approvedAds, 
+                   vector<Property>& PendingAds,
+                   string UserId, 
+                   unordered_map <string,
+                   User>& Users);
     // Reject ad
-    void RejectAd(Property ad, string UserId, vector<Property>& pendingAds, vector<Property>& ApprovedAds, vector<Property>& RejectedAds, unordered_map <string, User>& Users);
+    void RejectAd(Property ad, 
+                 string UserId, 
+                 vector<Property>& pendingAds, 
+                 vector<Property>& ApprovedAds,
+                 vector<Property>& RejectedAds, 
+                 unordered_map <string, User>& Users);
 
     // block a user from posting ads for a period of time
     void blockUser(string UserId, unordered_map <string, User>& Users);
@@ -47,7 +60,10 @@ public:
     void unblockUser(string UserId, unordered_map <string, User>& Users);
 
     // Ban user completely :prevent login or usage
-    void banUser(string UserId, unordered_map <string, User>& Users, vector<Property>& ApprovedAds, vector<Property>& PendingAds);
+    void banUser(string UserId,
+                 unordered_map <string, User>& Users, 
+                 vector<Property>& ApprovedAds,
+                 vector<Property>& PendingAds);
 
     // Unban user
     void unbanUser(string UserId, unordered_map <string, User>& Users);
@@ -56,7 +72,9 @@ public:
     void ViewApprovedAds(vector<Property>& ApprovedAds);
 
     //Moderate User's Activities
-    void ModerateUserActivity(unordered_map<string, User>& Users, vector<Property>ApprovedAds, vector<Property>PendingAds);
+    void ModerateUserActivity(unordered_map<string, User>& Users,
+                              vector<Property>ApprovedAds, 
+                              vector<Property>PendingAds);
 
     void ViewUserInfo(unordered_map<string, User>& Users);
 
@@ -82,16 +100,10 @@ public:
         vector<Property>& ApprovedAds,
         vector<Property>& RejectedAds,
         vector<string>types,
-        vector<string>locations);
+        vector<string>locations, const string& loggedInId);
 
     //Habiba Basel
 
-    void loadListings(vector<Property>& approvedProperties,
-        vector<Property>& pendingProperties,
-        vector<Property>& rejectedProperties);
-    void saveListings(vector<Property>& approvedProperties,
-        vector<Property>& pendingProperties,
-        vector<Property>& rejectedProperties);
     int generateNewId(vector<Property>& approvedProperties,
         vector<Property>& pendingProperties,
         vector<Property>& rejectedProperties);
@@ -118,7 +130,5 @@ public:
     void showAllProperties(vector<Property>& approvedProperties,
         vector<Property>& pendingProperties,
         vector<Property>& rejectedProperties);
-
+    void manageAdminProfile(unordered_map<string, Admin>& admins, const string& adminId);
 };
-
-
